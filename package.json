@@ -2,7 +2,7 @@
   "name": "cwkcheckr",
   "version": "1.0.0",
   "description": "Coursework checker application",
-  "main": "index.js",
+  "main": "views.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
