@@ -102,18 +102,10 @@ class DAO {
                 
                 if(disconnect_success) {
                     console.log("Application database disconnect success!");
-                    try{
-                        process.kill(-this.pipe.pid)
-                        console.log("Killed running mongod process")
-                        this.db_initalised = false   
-                    }
-                    catch(error){
-                        console.log(`Unable to kill running mongod process, error msg below:\n ${error}`)
-                    }
                 }
                 else {
-                    console.log(console.dir(err))
-                    console.log("Application database disconnect failure! See error details above.")
+                    console.log(console.dir(err));
+                    console.log("Application database disconnect failure! See error details above.");
                     }
         
                 });
