@@ -12,7 +12,7 @@ usersRouter.get('/', (req, res) => {
 // add new user
 usersRouter.post('/', async (req,res) => {
   const body = req.body
-  console.log(body)
+  //console.log(body)
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(body.password, saltRounds)
   
@@ -28,8 +28,6 @@ usersRouter.post('/', async (req,res) => {
   users.push(newUser);
 
   res.json(newUser)
-  //res.send("<p>r we getting smth</p>")
-
 })
 
 module.exports = usersRouter;
