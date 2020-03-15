@@ -15,7 +15,7 @@ class DAO {
 
     /* Functional methods - expose the classes concrete functionality */
 
-    init_db (){
+    async init_db (){
         // Initalise the connection to the application mongoDB database
 
         // TODO: change localhost to remote hostname IF we decide to host on remote server
@@ -24,8 +24,10 @@ class DAO {
         const hostname = "localhost";
         const connect_port = "1337";
         const db_name = "app_db";
-        const db_url = `mongodb://${hostname}:${connect_port}/${db_name}`;        
-        this._init_mongo()
+        const db_url = `mongodb://${hostname}:${connect_port}/${db_name}`;   
+        
+        // Wait for mongo to initalise first before attempting to connect to the mongo DB
+        await _init_mongo()
         
         mongoose.connect(db_url, (err, db) => {
         
@@ -96,36 +98,65 @@ class DAO {
 
     close_db_connection() {
         // Close the mongo db connection
-        mongoose.connection.close((err, db) => {
-        
-            let disconnect_success = !err
+        mongoose.connection.once("open", function () {
+            mongoose.connection.close((err, db) => {
             
-            if(disconnect_success) {
-                console.log("Application database disconnect success!");
-                this.db_initalised = false    
-            }
-            else {
-                console.log(console.dir(err))
-                console.log("Application database disconnect failure! See error details above.")
+                let disconnect_success = !err
+                
+                if(disconnect_success) {
+                    console.log("Application database disconnect success!");
+                    try{
+                        process.kill(-this.pipe.pid)
+                        console.log("Killed running mongod process")
+                        this.db_initalised = false   
+                    }
+                    catch(error){
+                        console.log(`Unable to kill running mongod process, error msg below:\n ${error}`)
+                    }
                 }
-    
+                else {
+                    console.log(console.dir(err))
+                    console.log("Application database disconnect failure! See error details above.")
+                    }
+        
+                });
             });
-    }
-
-    /* 
-    Utility methods - breakdown the concrete methods logic into smaller components, 
-    these shouldn't be exposed publically but I'm not sure theres a way to enforce access control
-    within JS other than function/method nesting, which looks awful/does more harm than good. 
-    _ used to indicate a private method instead (taken from python). 
-    */
-
-    _init_mongo () {
-        // Startup a mongo server instance.
-        // __dirname gets the directory the script is held within, then just need to specify the datbase dir.
-        var db_dir = `${__dirname}/database`
-        this.pipe = mongo_spawn('mongod', [`--dbpath=${db_dir}`, '--port', '1337'])
     }
     
 }
+
+/* 
+Utility methods - breakdown the concrete methods logic into smaller components, 
+these shouldn't be exposed publically but I'm not sure theres a way to enforce access control
+within JS other than function/method nesting, which looks awful/does more harm than good. 
+_ used to indicate a private method instead (taken from python). 
+*/
+
+async function _init_mongo () {
+    // Startup a mongo server instance.
+    // __dirname gets the directory the script is held within, then just need to specify the datbase dir.
+    var db_dir = `${__dirname}/database`
+
+    // detached true == start the process in a group of child processes, can then kill this process without
+    // killing the main process.
+    this.pipe = mongo_spawn('mongod', [`--dbpath=${db_dir}`, '--port', '1337'])
+
+    this.pipe.stdout.on('data', (data) => {
+        console.log(`standard output: ${data}`);
+        });
+        
+    this.pipe.stderr.on('data', (data) => {
+    console.error(`error: ${data}`);
+    });
+
+    this.pipe.on('close', (code) => {
+    console.log(`mongod process exited with code ${code}`);
+    });
+
+    // Give mongo time to startup.
+    var time_to_wait = 2000 //ms
+    await new Promise(r => setTimeout(r, time_to_wait));
+}
+
 
 module.exports = DAO;
