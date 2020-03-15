@@ -1,0 +1,34 @@
+<html lang="en">
+    {{>header}}
+        <body class="container">
+            {{>page-header-nologin}}
+            <div style="display:inline-block; font-size:52; margin-top:250px; font-family:'Red Hat Display', sans serif;">Join the</div>
+            <div style="display:inline-block; font-size:72; color:red; margin-top:250px; font-family:'Red Hat Display', sans serif;"> fun.</div>
+            <div class="jumbotron" style="display:inline-block; float:right; 
+            vertical-align:middle; margin-right:100px; margin-top:50px;
+            width:350px; background-color: #707070;">
+                <h2 style="font-size:32; color:white; margin-bottom:30px;">Register</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="registerName">Full Name</label>
+                        <input class="form-control" id="registerName" aria-describedby="nameHelp">
+                        <small id="nameHelp" class="form-text" style="color:white;">Please enter your full name.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email address</label>
+                        <input type="email" class="form-control" id="registerEmail" aria-describedby="emailHelp">
+                        <small id="emailHelp" class="form-text" style="color:white;">Please enter your email address.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <input type="password" class="form-control" id="registerPassword">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </body>
+</html>
