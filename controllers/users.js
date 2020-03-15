@@ -26,7 +26,6 @@ usersRouter.post('/', async (req,res) => {
   }
 
   users.push(newUser);
-
   res.json(newUser)
 })
 

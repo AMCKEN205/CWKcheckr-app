@@ -19,7 +19,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 app.use(requestLogger)//log requests
-app.use(express.json())
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 
@@ -29,13 +28,8 @@ app.get('/', (req, res) => {
   res.send('<h1>Hello World!</h1>')
 })
 app.get('/api', (req, res) => {
-  res.send('<p>all server calls will come to api /something</p>')
+  res.send('<p>all server calls will come to api/something. try api/users</p>')
 })
-app.post('/api/login', (req, res) => {
-  res.send('<p>login</p>')
-})
-
-
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, ()=> {
