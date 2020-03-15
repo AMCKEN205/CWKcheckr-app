@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const mongo_spawn = require('child_process').spawn;
 const schemas = require("./schemas")
 const models = require("./models")
-
+require("dotenv").config()
 
 class DAO {
 
@@ -10,7 +10,7 @@ class DAO {
         // Mongo server used to host the applications MongoDB.
         this.pipe = null
         this.db_initalised = false
-        this.db_url = "mongodb+srv://admin:Tvf4LRwDd64PAeph@cluster0-ixnml.mongodb.net/test?retryWrites=true&w=majority"
+        this.db_url = process.env.MONGODB_URI
     }
    
 
