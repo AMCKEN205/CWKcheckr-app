@@ -18,13 +18,6 @@ class DAO {
 
     async init_db (){
         // Initalise the connection to the application mongoDB database
-
-        // TODO: change localhost to remote hostname IF we decide to host on remote server
-        
-        // Define mongoDB attributes used.
-        const hostname = "localhost";
-        const connect_port = "1337";
-        const db_name = "app_db";
         
         mongoose.connect(this.db_url, (err, db) => {
         
