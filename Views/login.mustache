@@ -1,0 +1,25 @@
+<html lang="en">
+    {{>header}}
+        <body class="container">
+            {{>page-header-nologin}}
+            <div style="display:inline-block; font-size:52; margin-top:250px; font-family:'Red Hat Display', sans serif;">Welcome</div>
+            <div style="display:inline-block; font-size:72; color:red; margin-top:250px; font-family:'Red Hat Display', sans serif;"> back.</div>
+            <div class="jumbotron" style="display:inline-block; float:right; 
+            vertical-align:middle; margin-right:100px; margin-top:150px;
+            width:350px; background-color: #707070;">
+                <h2 style="font-size:32; color:white; margin-bottom:30px;">Login</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="loginEmail">Email address</label>
+                        <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp">
+                        <small id="emailHelp" class="form-text" style="color:white;">Enter the email you used to register.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" class="form-control" id="loginPassword">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+        </body>
+</html>

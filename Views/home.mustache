@@ -1,0 +1,44 @@
+<html lang="en">
+ {{>header}}
+<body class="container">
+    {{>page-header}}
+    <div class="container">
+        <h2 style="color:white;">Welcome, {{Student}}</h2>
+            <div>
+                <div class="jumbotron" style="display:inline-block; float:left; vertical-align:middle; background-color: #7D7D7D;">
+                    <h2 style="font-size:32; background-color:#3D3D3D; color:white; margin-bottom:30px;">Coursework quick glance</h2>
+                    {{#Coursework}}
+                        <div class="card" style="width:24rem; background-color:#707070; margin-bottom:50px;">
+                            <div class="card-heading">
+                                <h5 class="card-title" style="color:red;">{{Name}}</h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text" style="color:white;">Course: {{Course}}</p>
+                                <p class="card-text" style="color:white;">Due Date: {{Due Date}}</p>
+                                <p class="card-text" style="color:white;">Description: {{Description}}</p>
+                            </div>
+                        </div>
+                    {{/Coursework}}
+                </div>
+                <div class="jumbotron" style="display:inline-block; float:right; vertical-align:middle; background-color: #707070;">
+                    <h2 style="font-size:32; background-color:#3D3D3D; color:white; margin-bottom:30px;">Courses and Announcements</h2>
+                    {{#Courses}}
+                        <div class="card" style="width:24rem; background-color:#7D7D7D; margin-bottom:50px;">
+                            <div class="card-heading">
+                                <h5 class="card-title" style="color:red;">{{Name}}</h5>
+                            </div>
+                            <div class="card-body">
+                                {{#Announcements}}
+                                    <p class="card-text" style="color:white;">Announcement: {{Announcement}}</p>
+                                {{/Announcements}}
+                            </div>
+                        </div>
+                    {{/Courses}}
+                </div>
+                </div>
+            </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
