@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const mongo_spawn = require('child_process').spawn;
 const schemas = require("./schemas")
 const models = require("./models")
-
+require("dotenv").config()
 
 class DAO {
 
@@ -10,24 +10,16 @@ class DAO {
         // Mongo server used to host the applications MongoDB.
         this.pipe = null
         this.db_initalised = false
+        this.db_url = process.env.MONGODB_URI
     }
    
 
     /* Functional methods - expose the classes concrete functionality */
 
-    init_db (){
+    async init_db (){
         // Initalise the connection to the application mongoDB database
-
-        // TODO: change localhost to remote hostname IF we decide to host on remote server
         
-        // Define mongoDB attributes used.
-        const hostname = "localhost";
-        const connect_port = "1337";
-        const db_name = "app_db";
-        const db_url = `mongodb://${hostname}:${connect_port}/${db_name}`;        
-        this._init_mongo()
-        
-        mongoose.connect(db_url, (err, db) => {
+        mongoose.connect(this.db_url, (err, db) => {
         
             let connection_success = !err
             
@@ -96,34 +88,21 @@ class DAO {
 
     close_db_connection() {
         // Close the mongo db connection
-        mongoose.connection.close((err, db) => {
-        
-            let disconnect_success = !err
+        mongoose.connection.once("open", function () {
+            mongoose.connection.close((err, db) => {
             
-            if(disconnect_success) {
-                console.log("Application database disconnect success!");
-                this.db_initalised = false    
-            }
-            else {
-                console.log(console.dir(err))
-                console.log("Application database disconnect failure! See error details above.")
+                let disconnect_success = !err
+                
+                if(disconnect_success) {
+                    console.log("Application database disconnect success!");
                 }
-    
+                else {
+                    console.log(console.dir(err));
+                    console.log("Application database disconnect failure! See error details above.");
+                    }
+        
+                });
             });
-    }
-
-    /* 
-    Utility methods - breakdown the concrete methods logic into smaller components, 
-    these shouldn't be exposed publically but I'm not sure theres a way to enforce access control
-    within JS other than function/method nesting, which looks awful/does more harm than good. 
-    _ used to indicate a private method instead (taken from python). 
-    */
-
-    _init_mongo () {
-        // Startup a mongo server instance.
-        // __dirname gets the directory the script is held within, then just need to specify the datbase dir.
-        var db_dir = `${__dirname}/database`
-        this.pipe = mongo_spawn('mongod', [`--dbpath=${db_dir}`, '--port', '1337'])
     }
     
 }
