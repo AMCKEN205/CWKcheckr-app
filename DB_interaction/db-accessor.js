@@ -8,15 +8,13 @@ class DAO {
 
     constructor(){    
         // Mongo server used to host the applications MongoDB.
-        this.pipe = null
-        this.db_initalised = false
         this.db_url = process.env.MONGODB_URI
     }
    
 
     /* Functional methods - expose the classes concrete functionality */
 
-    async init_db (){
+    init_db (){
         // Initalise the connection to the application mongoDB database
         
         mongoose.connect(this.db_url, (err, db) => {
@@ -25,7 +23,6 @@ class DAO {
             
             if(connection_success) {
                 console.log("Application database connection success!");
-                this.db_initalised = true
             }
             else {
                 console.log(console.dir(err))
@@ -38,10 +35,6 @@ class DAO {
     add_student(student_no, name, username, passwordHash, courseworks, courses) {
         // Add new students to the database
         mongoose.connection.once("open", function () {
-            if (this.db_initalised == false){
-                console.log("Attempt to add a student without initalising a database connection")
-                return
-            }
     
             var student_to_add = new models.Student({
                 student_no : student_no,
@@ -67,24 +60,24 @@ class DAO {
     }
 
     list_students() {
-    // TODO
-    // list all students within the application, 
-    // returns a list of student entries.
-    var students_found = null;
-    mongoose.connection.once("open", function () {
-        models.Student.find({}, function(err, students) {
-            var studentMap = {};
-            
-            students.forEach(function(student) {
-                studentMap[student.student_no] = student;
+        // TODO
+        // list all students within the application, 
+        // returns a list of student entries.
+        var students_found = null;
+        mongoose.connection.once("open", function () {
+            models.Student.find({}, function(err, students) {
+                var studentMap = {};
+                
+                students.forEach(function(student) {
+                    studentMap[student.student_no] = student;
+                });
+
+                students_found = studentMap
+
             });
-
-            students_found = studentMap
-
         });
-    });
-    return students_found;
-}
+        return students_found;
+    }
 
     close_db_connection() {
         // Close the mongo db connection
