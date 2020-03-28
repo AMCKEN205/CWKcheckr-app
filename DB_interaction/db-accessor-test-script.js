@@ -2,7 +2,9 @@ const DAO = require('./db-accessor');
 
 dao = new DAO()
 
-dao.init_db()
+dao.get_students().then(students => {
+    console.log(students)
+})
 
 dao.add_student(
     1, 
