@@ -6,7 +6,7 @@ var student_schema = new mongoose.Schema({
     student_no: Number,
     name: String,
     username: String,
-    password: String,
+    passwordHash: String,
     courseworks: [{parent_course_no: Number, coursework_title: String, coursework_description: String}],
     courses: [{course_no: Number, course_name: String}]
 });

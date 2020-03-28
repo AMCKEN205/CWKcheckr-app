@@ -35,7 +35,7 @@ class DAO {
             });
         }
 
-    add_student(student_no, name, username, password, courseworks, courses) {
+    add_student(student_no, name, username, passwordHash, courseworks, courses) {
         // Add new students to the database
         mongoose.connection.once("open", function () {
             if (this.db_initalised == false){
@@ -47,7 +47,7 @@ class DAO {
                 student_no : student_no,
                 name : name,
                 username : username,
-                password : password,
+                passwordHash : passwordHash,
                 courseworks : courseworks,
                 courses : courses
             });
