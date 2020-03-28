@@ -2,17 +2,17 @@ const db_accessor = require('./db-accessor');
 
 dao = new db_accessor.DAO();
 
-// dao.get_model_items(db_accessor.models.Student).then(students => {
-//     console.log(students)
-// });
+dao.get_model_items(db_accessor.models.Student).then(students => {
+    console.log(students)
+});
 
-// dao.get_model_items(db_accessor.models.Course).then(courses => {
-//     console.log(courses)
-// });
+dao.get_model_items(db_accessor.models.Course).then(courses => {
+    console.log(courses)
+});
 
-// dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
-//     console.log(courseworks)
-// });
+dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
+    console.log(courseworks)
+});
 
 // dao.add_student(
 //     1, 
@@ -35,14 +35,14 @@ dao = new db_accessor.DAO();
     
 //     );
 
-// should fail
-dao.add_coursework(
-    1,
-    2,
-    "Test coursework",
-    "A test coursework",
-    new Date(2020, 07, 04)
-)
+//should fail
+// dao.add_coursework(
+//     1,
+//     2,
+//     "Test coursework",
+//     "A test coursework",
+//     new Date(2020, 07, 04)
+// )
 
 // should pass
 dao.add_coursework(

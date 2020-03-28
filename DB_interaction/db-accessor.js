@@ -83,38 +83,32 @@ class DAO {
             courseId
             ]}
         };
-
-        var db_initalised = false
-
         var get_course_ids_projection_doc = {_id : 0, courseId : 1}
         this.get_model_items(models.Course, get_course_ids_find_doc, get_course_ids_projection_doc)
             .then(courseIds => {
                 if (courseIds.length == 0){
                     throw "Attempted to add a coursework not linked to an existing course!";
                 }
+                else{
+                    this._init_db();
+                }
             })
             .then(() => {
-                this._init_db();
-                db_initalised = true
-                mongoose.connection.once("open", function() {
-                    coursework_to_add.save();
-                    console.log(`coursework ${coursework_to_add.courseId} saved to courseworks collection.`);
-                })
+                coursework_to_add.save();
+                console.log(`coursework ${coursework_to_add.courseId} saved to courseworks collection.`);
             })
             .catch(err => {
                 console.log(err)
                 console.log(`coursework ${coursework_to_add.courseId} failed to save to courseworks collection, see error above.`);
             })
             .then(() => {
-                // Always close the database connection, 
-                // regardless as to the success or failure of the operation
-                if (db_initalised){
-                    mongoose.connection.once("open", function() {
-                        this._close_db_connection();
-                        });
-                    }
-                }
-            );        
+            // Always close the database connection, 
+            // regardless as to the success or failure of the operation
+            var connected_state = 1
+            var connecting_state = 2
+            if (mongoose.connection.readyState == connected_state || mongoose.connection.readyState == connecting_state)
+                this._close_db_connection();
+            });        
     }
 
     get_model_items(model, query_doc={}, projection_doc=null) {
