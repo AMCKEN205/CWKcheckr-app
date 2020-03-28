@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const mongo_spawn = require('child_process').spawn;
-const schemas = require("./schemas")
 const models = require("./models")
 require("dotenv").config()
 
@@ -29,7 +27,7 @@ class DAO {
         });
 
         student_to_add.save()
-        .then(result => {
+        .then(() => {
             console.log(`student ${student_to_add.student_no} saved to students collection.`);
         })
         .catch(err => {
@@ -37,10 +35,40 @@ class DAO {
             console.log(`student ${student_to_add.student_no} failed to save to students collection, see error above.`);
         })
         .then(() => {
+            // Always close the database connection, 
+            // regardless as to the success or failure of the operation
             this._close_db_connection();
         });
-
     }
+
+    add_course(courseId, courseName, courseTeacher, courseDescription) {
+        // Add new students to the database
+        
+        this._init_db();
+        
+        var course_to_add = new models.Course({
+            courseId : courseId,
+            courseName : courseName,
+            courseTeacher : courseTeacher,
+            courseDescription : courseDescription
+        });
+
+        course_to_add.save()
+        .then(() => {
+            console.log(`course ${course_to_add.courseId} saved to courses collection.`);
+        })
+        .catch(err => {
+            console.log(err.message)
+            console.log(`course ${course_to_add.courseId} failed to save to courses collection, see error above.`);
+        })
+        .then(() => {
+            // Always close the database connection, 
+            // regardless as to the success or failure of the operation
+            this._close_db_connection();
+        });
+    }
+
+    
 
     get_students() {
         this._init_db();
@@ -60,6 +88,8 @@ class DAO {
                 reject(null);
             })
             .then(() => {
+                // Always close the database connection, 
+                // regardless as to the success or failure of the operation
                 this._close_db_connection()
             });
         });
@@ -89,6 +119,7 @@ class DAO {
             console.log("Application database disconnect success!");
         })
         .catch((err) => {
+            // Disconnect failure
             console.log(console.log(err.message));
             console.log("Application database disconnect failure! See error details above.");
         });

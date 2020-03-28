@@ -19,19 +19,20 @@ var course_schema = new mongoose.Schema({
     courseId: Number,
     courseName: String,
     courseTeacher: String,
-    passwordHash: String,
-    courseDescription: String,
-    completionDate: Date
+    courseDescription: String
 });
 
 var coursework_schema = new mongoose.Schema({
     courseworkId: Number,
     courseId: Number,
     courseName: String,
-    courseTeacher: String,
-    passwordHash: String,
-    courseDescription: String,
-    completionDate: Date
+    CourseworkName: String,
+    CourseworkDescription: String,
+    dueDate: Date
 });
 
-module.exports = {student_schema : student_schema, course_schema : course_schema}
+module.exports = {
+    student_schema : student_schema, 
+    course_schema : course_schema, 
+    coursework_schema : coursework_schema
+}
