@@ -12,13 +12,13 @@ class DAO {
 
     /* Functional methods - expose the classes concrete functionality */
 
-    add_student(student_no, name, username, passwordHash, courseworks, courses) {
+    add_student(studentNo, name, username, passwordHash, courseworks, courses) {
         // Add new students to the database
         
         this._init_db();
         
         var student_to_add = new models.Student({
-            student_no : student_no,
+            studentNo : studentNo,
             name : name,
             username : username,
             passwordHash : passwordHash,
@@ -28,11 +28,11 @@ class DAO {
 
         student_to_add.save()
         .then(() => {
-            console.log(`student ${student_to_add.student_no} saved to students collection.`);
+            console.log(`student ${student_to_add.studentNo} saved to students collection.`);
         })
         .catch(err => {
             console.log(err.message)
-            console.log(`student ${student_to_add.student_no} failed to save to students collection, see error above.`);
+            console.log(`student ${student_to_add.studentNo} failed to save to students collection, see error above.`);
         })
         .then(() => {
             // Always close the database connection, 
@@ -68,23 +68,49 @@ class DAO {
         });
     }
 
-    
+    add_coursework(courseworkId, courseId, CourseworkName, CourseworkDescription, dueDate) {
+        // Add new students to the database
+        
+        this._init_db();
+        
+        var coursework_to_add = new models.Coursework({
+            courseworkId : courseworkId,
+            courseId : courseId,
+            CourseworkName : CourseworkName,
+            CourseworkDescription : CourseworkDescription,
+            dueDate : dueDate
+        });
 
-    get_students() {
+        
+
+        coursework_to_add.save()
+        .then(() => {
+            console.log(`course ${coursework_to_add.courseId} saved to courses collection.`);
+        })
+        .catch(err => {
+            console.log(err.message)
+            console.log(`course ${coursework_to_add.courseId} failed to save to courses collection, see error above.`);
+        })
+        .then(() => {
+            // Always close the database connection, 
+            // regardless as to the success or failure of the operation
+            this._close_db_connection();
+        });
+    }
+
+    get_model_items(model) {
+        // Gets the entries for the passed in model.
+        // e.g. if the student model is passed in gets the student entries.
+        
         this._init_db();
         return new Promise((resolve, reject) => {
-            models.Student.find({})
-            .then(function(students) {
-                var studentMap = {};
-                students.forEach(function(student) {
-                    studentMap[student.student_no] = student;
-                });
-
-                resolve(studentMap);
+            model.find({})
+            .then(function(entries) {
+                resolve(entries);
             })
             .catch(function(err) {
                 console.log(err);
-                console.log(`Failed to list students, see error above.`);
+                console.log(`Failed to list model entries, see error above.`);
                 reject(null);
             })
             .then(() => {
@@ -127,4 +153,9 @@ class DAO {
      
 }
 
-module.exports = DAO;
+// Export data models from the DAO so app data interaction 
+// can be managed within a single centralised class.
+module.exports = {
+    DAO : DAO, 
+    models : models
+}

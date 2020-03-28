@@ -25,9 +25,8 @@ var course_schema = new mongoose.Schema({
 var coursework_schema = new mongoose.Schema({
     courseworkId: Number,
     courseId: Number,
-    courseName: String,
-    CourseworkName: String,
-    CourseworkDescription: String,
+    courseworkName: String,
+    courseworkDescription: String,
     dueDate: Date
 });
 
