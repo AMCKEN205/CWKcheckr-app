@@ -31,7 +31,7 @@ class DAO {
             console.log(`student ${student_to_add.studentNo} saved to students collection.`);
         })
         .catch(err => {
-            console.log(err.message)
+            console.log(err)
             console.log(`student ${student_to_add.studentNo} failed to save to students collection, see error above.`);
         })
         .then(() => {
@@ -58,7 +58,7 @@ class DAO {
             console.log(`course ${course_to_add.courseId} saved to courses collection.`);
         })
         .catch(err => {
-            console.log(err.message)
+            console.log(err)
             console.log(`course ${course_to_add.courseId} failed to save to courses collection, see error above.`);
         })
         .then(() => {
@@ -68,43 +68,67 @@ class DAO {
         });
     }
 
-    add_coursework(courseworkId, courseId, CourseworkName, CourseworkDescription, dueDate) {
+    add_coursework(courseworkId, courseId, courseworkName, courseworkDescription, dueDate) {
         // Add new students to the database
-        
-        this._init_db();
-        
+                
         var coursework_to_add = new models.Coursework({
             courseworkId : courseworkId,
             courseId : courseId,
-            CourseworkName : CourseworkName,
-            CourseworkDescription : CourseworkDescription,
+            courseworkName : courseworkName,
+            courseworkDescription : courseworkDescription,
             dueDate : dueDate
         });
-
         
+        var get_course_ids_find_doc = {"courseId" : {$in : [
+            courseId
+            ]}
+        };
 
-        coursework_to_add.save()
-        .then(() => {
-            console.log(`course ${coursework_to_add.courseId} saved to courses collection.`);
-        })
-        .catch(err => {
-            console.log(err.message)
-            console.log(`course ${coursework_to_add.courseId} failed to save to courses collection, see error above.`);
-        })
-        .then(() => {
-            // Always close the database connection, 
-            // regardless as to the success or failure of the operation
-            this._close_db_connection();
-        });
+        var db_initalised = false
+
+        var get_course_ids_projection_doc = {_id : 0, courseId : 1}
+        this.get_model_items(models.Course, get_course_ids_find_doc, get_course_ids_projection_doc)
+            .then(courseIds => {
+                if (courseIds.length == 0){
+                    throw "Attempted to add a coursework not linked to an existing course!";
+                }
+            })
+            .then(() => {
+                this._init_db();
+                db_initalised = true
+                mongoose.connection.once("open", function() {
+                    coursework_to_add.save();
+                    console.log(`coursework ${coursework_to_add.courseId} saved to courseworks collection.`);
+                })
+            })
+            .catch(err => {
+                console.log(err)
+                console.log(`coursework ${coursework_to_add.courseId} failed to save to courseworks collection, see error above.`);
+            })
+            .then(() => {
+                // Always close the database connection, 
+                // regardless as to the success or failure of the operation
+                if (db_initalised){
+                    mongoose.connection.once("open", function() {
+                        this._close_db_connection();
+                        });
+                    }
+                }
+            );        
     }
 
-    get_model_items(model) {
-        // Gets the entries for the passed in model.
+    get_model_items(model, query_doc={}, projection_doc=null) {
+        // Gets all the entries for the passed in model.
         // e.g. if the student model is passed in gets the student entries.
         
+        // query_doc == mongo query used to find objects containing specific field values.
+        // {} == don't apply a query.
+
+        // projection_doc == mongo query used to find specific fields of model
+        // db entries found. Null == find every item with every field.
         this._init_db();
         return new Promise((resolve, reject) => {
-            model.find({})
+            model.find(query_doc, projection_doc)
             .then(function(entries) {
                 resolve(entries);
             })
@@ -132,7 +156,7 @@ class DAO {
         })
         .catch((err) => {
             // Database connection failure
-            console.log(console.log(err.message));
+            console.log(console.log(err));
             console.log("Application database connection failure! See error details above.");
         })
     }
@@ -146,7 +170,7 @@ class DAO {
         })
         .catch((err) => {
             // Disconnect failure
-            console.log(console.log(err.message));
+            console.log(console.log(err));
             console.log("Application database disconnect failure! See error details above.");
         });
     }
