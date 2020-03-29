@@ -36,13 +36,13 @@ dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
 //     );
 
 //should fail
-// dao.add_coursework(
-//     1,
-//     2,
-//     "Test coursework",
-//     "A test coursework",
-//     new Date(2020, 07, 04)
-// )
+dao.add_coursework(
+    1,
+    2,
+    "Test coursework",
+    "A test coursework",
+    new Date(2020, 07, 04)
+)
 
 // should pass
 dao.add_coursework(
