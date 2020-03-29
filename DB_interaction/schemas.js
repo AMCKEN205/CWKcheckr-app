@@ -3,12 +3,35 @@ const mongoose = require("mongoose");
 // Define the schemas used to persist different application document types within the database.
 
 var student_schema = new mongoose.Schema({
-    student_no: Number,
+    studentNo: Number,
     name: String,
     username: String,
-    password: String,
-    courseworks: [{parent_course_no: Number, coursework_title: String, coursework_description: String}],
-    courses: [{course_no: Number, course_name: String}]
+    passwordHash: String,
+    courseworks: [{
+                    courseWorkId: Number
+                }],
+    courses: [{
+                courseId: Number
+            }]
 });
 
-module.exports = {student_schema : student_schema}
+var course_schema = new mongoose.Schema({
+    courseId: Number,
+    courseName: String,
+    courseTeacher: String,
+    courseDescription: String
+});
+
+var coursework_schema = new mongoose.Schema({
+    courseworkId: Number,
+    courseId: Number,
+    courseworkName: String,
+    courseworkDescription: String,
+    dueDate: Date
+});
+
+module.exports = {
+    student_schema : student_schema, 
+    course_schema : course_schema, 
+    coursework_schema : coursework_schema
+}
