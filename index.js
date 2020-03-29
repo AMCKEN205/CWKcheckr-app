@@ -14,7 +14,7 @@ const app = express();
 app.set('view engine', 'mustache');
 app.set('views', path.resolve(__dirname, 'Views'));
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/Resources'));
 
 app.use(middleware.requestLogger)//log requests

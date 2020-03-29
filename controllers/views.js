@@ -1,7 +1,4 @@
 //response handlers for all of frontend.
-var mustache = require('mustache-express') 
-path = require('path');
-
 const viewsRouter = require('express').Router()
 
 
