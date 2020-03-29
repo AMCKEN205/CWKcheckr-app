@@ -225,7 +225,7 @@ class DAO {
         // Add a student to a course
 
         // Indicate we've started running the add add course to student process. 
-        var add_coursework_run_indicator = "add_course_to_student"
+        var add_coursework_run_indicator = "add_coursework_to_student"
 
         this.process_queue.push(add_coursework_run_indicator)
 
@@ -242,43 +242,63 @@ class DAO {
         .then(courseIds => {
             if (courseIds.length == 0)
             {
-                throw "Attempted to link a non-existent course to a student!";
+                throw "Attempted to link a non-existent course coursework to a student!";
             }
-            else
+            var get_coursework_ids_find_doc = 
             {
+                "courseworkId" : {$in : [courseworkId]},
+                "courseId" : {$in : [courseId]}
+            };
+    
+            var get_coursework_ids_projection_doc = {_id : 0, courseworkId : 1}
+
+            this.get_model_items(models.Coursework, get_coursework_ids_find_doc, get_coursework_ids_projection_doc)
+            .then(courseworkIds => {
+                if (courseworkIds.length == 0)
+                {
+                    throw "Attempted to link a non-existent coursework to a student!";
+                }
                 var get_student_no_find_doc = 
                 {
                     "studentNo" : {$in : [studentNo]}
                 }
                 this.get_model_items(models.Student, get_student_no_find_doc)
-                .then(students => 
-                {
-                    if (students.length == 0)
+                    .then(students => 
                     {
-                        throw "Attempted to link a course to a non-existent student!"
-                    }
-                    else
+                        if (students.length == 0)
+                        {
+                            throw "Attempted to link a coursework to a non-existent student!"
+                        }
+                        else
+                        {
+                            var student_no_get_doc = {"studentNo" : studentNo}
+                            var student_courses_update_doc = {$push : {"courseworks" : courseworkId}};
+                            models.Student.collection.findOneAndUpdate(student_no_get_doc, student_courses_update_doc);
+                            console.log(`coursework ${courseworkId} saved to student ${studentNo} courseworks collection.`);
+                        }
+                    })
+                    .catch(err => 
                     {
-                        var student_no_get_doc = {"studentNo" : studentNo}
-                        var student_courses_update_doc = {$push : {"courses" : courseId}};
-                        models.Student.collection.findOneAndUpdate(student_no_get_doc, student_courses_update_doc);
-                        console.log(`course ${courseId} saved to student ${studentNo} courses collection.`);
-                    }
-                })
-                .catch(err => 
-                {
-                    // return error to outer promise scope, which will then move onto closing db connection.
-                    // Would prefer to rethrow to avoid duplicate code but seems to be causing issues with outer catch.
-                    console.log(err);
-                    console.log(`course ${courseId} failed to link to student ${studentNo} within students collection, see error above.`);
-                    return err
-                });
-            }
+                        // return error to outer promise scope, which will then move onto closing db connection.
+                        // Would prefer to rethrow to avoid duplicate code but seems to be causing issues with outer catch.
+                        console.log(err);
+                        console.log(`coursework ${courseworkId} failed to link to student ${studentNo} within students collection, see error above.`);
+                        return err
+                    });
+            })
+            .catch(err => 
+            {
+                 // return error to outer promise scope, which will then move onto closing db connection.
+                // Would prefer to rethrow to avoid duplicate code but seems to be causing issues with outer catch.
+                console.log(err);
+                console.log(`coursework ${courseworkId} failed to link to student ${studentNo} within students collection, see error above.`);
+                return err
+            });
         })
         .catch(err => 
         {
             console.log(err);
-            console.log(`course ${courseId} failed to link to student ${studentNo} within students collection, see error above.`);
+            console.log(`coursework ${courseworkId} failed to link to student ${studentNo} within students collection, see error above.`);
         })
         .then(() => 
         {
