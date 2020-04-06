@@ -8,15 +8,16 @@
             vertical-align:middle; margin-right:100px; margin-top:150px;
             width:350px; background-color: #707070;">
                 <h2 style="font-size:32; color:white; margin-bottom:30px;">Login</h2>
-                <form>
+                <h3 style="font-size:24; color:red;">{{error}}</h3>
+                <form action= "/api/login" method = "post">
                     <div class="form-group">
-                        <label for="loginEmail">Email address</label>
-                        <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp">
-                        <small id="emailHelp" class="form-text" style="color:white;">Enter the email you used to register.</small>
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" aria-describedby="userHelp">
+                        <small id="userHelp" class="form-text" style="color:white;">Enter the username you used to register.</small>
                     </div>
                     <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <input type="password" class="form-control" id="loginPassword">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>

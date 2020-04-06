@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const models = require("./models")
 require("dotenv").config()
+const bcrypt = require('bcrypt')
+const saltrounds = 10;
 
 class DAO {
 
@@ -18,43 +20,55 @@ class DAO {
 
     /* Functional methods - expose the classes concrete functionality */
 
-    add_student(studentNo, name, username, passwordHash, courseworks, courses) {
+    add_student(name, username, password, courseworks, courses) {
         // Add new students to the database
         
+        var add_student_run_indicator = "add_student"
+        var hash = bcrypt.hashSync(password, saltrounds);
+        this.process_queue.push(add_student_run_indicator)
         this._init_db();
 
         // Indicate we've stopped running the add student process.
-        var add_student_run_indicator = "add_student"
-        this.process_queue.push(add_student_run_indicator)
-
-        var student_to_add = new models.Student
-        ({
-            studentNo : studentNo,
-            name : name,
-            username : username,
-            passwordHash : passwordHash,
-            courseworks : courseworks,
-            courses : courses
-        });
-
-        student_to_add.save()
-        .then(() => 
-        {
-            console.log(`student ${student_to_add.studentNo} saved to students collection.`);
-        })
-        .catch(err => 
-        {
-            console.log(err)
-            console.log(`student ${student_to_add.studentNo} failed to save to students collection, see error above.`);
-        })
-        .then(() => 
-        {
-            // Always close the database connection, 
-            // regardless as to the success or failure of the operation
-            
-            // Indicate we've stopped running the add student process.
-            this.process_queue.shift()
-            this._close_db_connection();
+        return new Promise((resolve, reject) => {
+            var outcome = "";
+            this.get_model_items(models.Student).then(students => {
+                var studentNum = students.length + 1
+                for(var i = 0; i < students.length; i++) {
+                    if(students[i].username === username) {
+                        outcome = 0;
+                        resolve(outcome);
+                        return outcome;
+                    }
+                }
+                var student_to_add = new models.Student
+                ({
+                    studentNo : studentNum,
+                    name : name,
+                    username : username,
+                    passwordHash : hash,
+                    courseworks : courseworks,
+                    courses : courses
+                });
+                student_to_add.save()
+                .then(() => 
+                {
+                    console.log(`student ${student_to_add.studentNo}, ${student_to_add.username} saved to students collection.`);
+                    outcome = true;
+                    resolve(outcome);
+                })
+                .catch(err => 
+                {
+                    console.log(err)
+                    console.log(`student ${student_to_add.studentNo} failed to save to students collection, see error above.`);
+                    outcome = false;
+                    resolve(outcome);
+                });
+            }).catch(err => {
+                console.log(err);
+                console.log("Failed to get students, see error above.");
+                outcome = false;
+                resolve(outcome);
+            })
         });
     }
 

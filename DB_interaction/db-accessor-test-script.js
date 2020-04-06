@@ -1,18 +1,21 @@
 const db_accessor = require('./db-accessor');
 
 dao = new db_accessor.DAO();
-
-dao.get_model_items(db_accessor.models.Student).then(students => {
-    console.log(students)
+var get_username_find_doc = 
+{
+    "username" : "doesn't exist"
+}
+dao.get_model_items(db_accessor.models.Student, get_username_find_doc).then(students => {
+    console.log(students.length)
 });
 
-dao.get_model_items(db_accessor.models.Course).then(courses => {
-    console.log(courses)
-});
+//dao.get_model_items(db_accessor.models.Course).then(courses => {
+  //  console.log(courses)
+//});
 
-dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
-    console.log(courseworks)
-});
+//dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
+  //  console.log(courseworks)
+//});
 
 // dao.add_student(
 //     1, 
@@ -54,9 +57,9 @@ dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
 // dao.add_course_to_student(1, 1)
 
 // should fail
-dao.add_coursework_to_student(2, 1, 1)
-dao.add_coursework_to_student(1, 2, 1)
-dao.add_coursework_to_student(1, 1, 2)
+//dao.add_coursework_to_student(2, 1, 1)
+//dao.add_coursework_to_student(1, 2, 1)
+//dao.add_coursework_to_student(1, 1, 2)
 
 // should pass
 //dao.add_coursework_to_student(1, 1, 1)
