@@ -351,7 +351,7 @@ class DAO {
         });
     }
 
-    remove_coursework_from_student(studentNo, courseworkId){
+    edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate){
         // Remove a coursework from a student
 
         // Indicate we've started running the remove coursework from student process. 
@@ -370,39 +370,58 @@ class DAO {
             {
                 if (students.length == 0)
                 {
-                    throw "Attempted to link a coursework to a non-existent student!"
+                    throw "Attempted to update a coursework of a non-existent student!"
                 }
                 else
                 {
-                    var student_no_get_doc = {"studentNo" : studentNo}
-                    // Student has yet to complete the coursework, so set a null on inital set. 
-                    // Indicates the coursework has yet to be completed.
-                    var completion_date_inital_set = null
-                    var milestones_inital_set = []
 
-                    var student_courses_update_doc = {$push : {
-                            "courseworks" : {
-                                courseworkId: courseworkId, 
-                                courseworkName: courseworkName, 
-                                completionDate: completion_date_inital_set, 
-                                milestones: milestones_inital_set,
-                                dueDate : dueDate
-                            } 
-                        }
-                    };
-                    
-                    models.Student.collection.findOneAndUpdate(student_no_get_doc, student_courses_update_doc);
-                    console.log(`coursework ${courseworkId} saved to student ${studentNo} courseworks collection.`);
+                    var student_no_get_doc = {
+                        "studentNo" : studentNo
+                    }
+
+                    models.Student.collection.findOne(student_no_get_doc).then(student => 
+                        {
+                            var courseworks = student.courseworks
+                            for ( var i=0; i < courseworks.length; i++ ) {
+                                if (courseworks[i].courseworkId == courseworkId) {
+
+                                    courseworks[i].completionDate = completionDate
+                                    courseworks[i].milestones = milestones
+                                    courseworks[i].dueDate = dueDate
+
+                                }
+                            }
+                            models.Student.collection.save(student)
+                            .then( res => 
+                                {
+                                    console.log(`updated coursework ${courseworkId} within student ${studentNo} courseworks collection.`);
+                                })
+                            .catch(err =>
+                            {
+                                // return error to outer promise scope, which will then move onto closing db connection.
+                                // Would prefer to rethrow to avoid duplicate code but seems to be causing issues with outer catch.
+                                console.log(err);
+                                console.log(`coursework ${courseworkId} not found in student ${studentNo} within students collection, see error above.`);
+                                return err
+                            })
+                            .then(() => 
+                            {
+                                // Always close the database connection, 
+                                // regardless as to the success or failure of the operation
+                                
+                                // Indicate we've stopped running the add coursework process. 
+                                this.process_queue.shift();
+                                this._close_db_connection();
+                            });
+                        });
                 }
             })
             .catch(err => 
             {
-                // return error to outer promise scope, which will then move onto closing db connection.
-                // Would prefer to rethrow to avoid duplicate code but seems to be causing issues with outer catch.
                 console.log(err);
-                console.log(`coursework ${courseworkId} failed to link to student ${studentNo} within students collection, see error above.`);
+                console.log(`coursework ${courseworkId} not found in student ${studentNo} within students collection, see error above.`);
                 return err
-            });
+            })
     }
     get_model_items(model, query_doc={}, projection_doc=null) {
         // Gets all the entries for the passed in model.
