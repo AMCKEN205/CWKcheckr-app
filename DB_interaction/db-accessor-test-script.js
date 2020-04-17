@@ -59,4 +59,4 @@ dao.add_coursework_to_student(1, 2, 1)
 dao.add_coursework_to_student(1, 1, 2)
 
 // should pass
-//dao.add_coursework_to_student(1, 1, 1)
+dao.add_coursework_to_student(1, 1, 1)
