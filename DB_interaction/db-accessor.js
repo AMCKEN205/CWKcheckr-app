@@ -123,6 +123,8 @@ class DAO {
 
         this._init_db()
 
+        // Yet to complete coursework, so we set completion date
+        // to null to indicate this.
         var coursework_to_add = new models.Coursework
         ({
             courseworkId : courseworkId,
@@ -182,7 +184,7 @@ class DAO {
             "courseId" : {$in : [courseId]}
         };
 
-        var get_course_ids_projection_doc = {_id : 0, courseId : 1}
+        var get_course_ids_projection_doc = {_id : 0, courseId : 1, courseName : 1}
 
         this.get_model_items(models.Course, get_course_ids_find_doc, get_course_ids_projection_doc)
         .then(courseIds => {
@@ -192,6 +194,8 @@ class DAO {
             }
             else
             {
+                var courseName = courseIds[0].courseName
+
                 var get_student_no_find_doc = 
                 {
                     "studentNo" : {$in : [studentNo]}
@@ -206,7 +210,8 @@ class DAO {
                     else
                     {
                         var student_no_get_doc = {"studentNo" : studentNo}
-                        var student_courses_update_doc = {$push : {"courses" : courseId}};
+                        var student_courses_update_doc = {$push : {"courses" : 
+                        {courseId : courseId, courseName: courseName} }};
                         models.Student.collection.findOneAndUpdate(student_no_get_doc, student_courses_update_doc);
                         console.log(`course ${courseId} saved to student ${studentNo} courses collection.`);
                     }
@@ -254,6 +259,8 @@ class DAO {
 
         var get_course_ids_projection_doc = {_id : 0, courseId : 1}
 
+        // In retrospect, these DB calls should have probably used findOne here, however functionally this works ok.
+        // TODO: Refactor if we have time in the end.
         this.get_model_items(models.Course, get_course_ids_find_doc, get_course_ids_projection_doc)
         .then(courseIds => {
             if (courseIds.length == 0)
@@ -266,14 +273,16 @@ class DAO {
                 "courseId" : {$in : [courseId]}
             };
     
-            var get_coursework_ids_projection_doc = {_id : 0, courseworkId : 1}
+            var get_courseworks_projection_doc = {_id : 0, courseworkId : 1, courseworkName : 1, dueDate : 1}
 
-            this.get_model_items(models.Coursework, get_coursework_ids_find_doc, get_coursework_ids_projection_doc)
-            .then(courseworkIds => {
-                if (courseworkIds.length == 0)
+            this.get_model_items(models.Coursework, get_coursework_ids_find_doc, get_courseworks_projection_doc)
+            .then(courseworks => {
+                if (courseworks.length == 0)
                 {
                     throw "Attempted to link a non-existent coursework to a student!";
                 }
+                var courseworkName = courseworks[0].courseworkName
+                var dueDate = courseworks[0].dueDate
                 var get_student_no_find_doc = 
                 {
                     "studentNo" : {$in : [studentNo]}
@@ -288,7 +297,22 @@ class DAO {
                         else
                         {
                             var student_no_get_doc = {"studentNo" : studentNo}
-                            var student_courses_update_doc = {$push : {"courseworks" : courseworkId}};
+                            // Student has yet to complete the coursework, so set a null on inital set. 
+                            // Indicates the coursework has yet to be completed.
+                            var completion_date_inital_set = null
+                            var milestones_inital_set = []
+
+                            var student_courses_update_doc = {$push : {
+                                    "courseworks" : {
+                                        courseworkId: courseworkId, 
+                                        courseworkName: courseworkName, 
+                                        completionDate: completion_date_inital_set, 
+                                        milestones: milestones_inital_set,
+                                        dueDate : dueDate
+                                    } 
+                                }
+                            };
+                            
                             models.Student.collection.findOneAndUpdate(student_no_get_doc, student_courses_update_doc);
                             console.log(`coursework ${courseworkId} saved to student ${studentNo} courseworks collection.`);
                         }
@@ -327,6 +351,59 @@ class DAO {
         });
     }
 
+    remove_coursework_from_student(studentNo, courseworkId){
+        // Remove a coursework from a student
+
+        // Indicate we've started running the remove coursework from student process. 
+        var add_coursework_run_indicator = "remove_coursework_from_student"
+
+        this.process_queue.push(add_coursework_run_indicator)
+
+        this._init_db()
+
+        var get_student_no_find_doc = 
+        {
+            "studentNo" : {$in : [studentNo]}
+        }
+        this.get_model_items(models.Student, get_student_no_find_doc)
+            .then(students => 
+            {
+                if (students.length == 0)
+                {
+                    throw "Attempted to link a coursework to a non-existent student!"
+                }
+                else
+                {
+                    var student_no_get_doc = {"studentNo" : studentNo}
+                    // Student has yet to complete the coursework, so set a null on inital set. 
+                    // Indicates the coursework has yet to be completed.
+                    var completion_date_inital_set = null
+                    var milestones_inital_set = []
+
+                    var student_courses_update_doc = {$push : {
+                            "courseworks" : {
+                                courseworkId: courseworkId, 
+                                courseworkName: courseworkName, 
+                                completionDate: completion_date_inital_set, 
+                                milestones: milestones_inital_set,
+                                dueDate : dueDate
+                            } 
+                        }
+                    };
+                    
+                    models.Student.collection.findOneAndUpdate(student_no_get_doc, student_courses_update_doc);
+                    console.log(`coursework ${courseworkId} saved to student ${studentNo} courseworks collection.`);
+                }
+            })
+            .catch(err => 
+            {
+                // return error to outer promise scope, which will then move onto closing db connection.
+                // Would prefer to rethrow to avoid duplicate code but seems to be causing issues with outer catch.
+                console.log(err);
+                console.log(`coursework ${courseworkId} failed to link to student ${studentNo} within students collection, see error above.`);
+                return err
+            });
+    }
     get_model_items(model, query_doc={}, projection_doc=null) {
         // Gets all the entries for the passed in model.
         // e.g. if the student model is passed in gets the student entries.
