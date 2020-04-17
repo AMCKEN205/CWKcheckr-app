@@ -392,7 +392,7 @@ class DAO {
                                 }
                             }
                             models.Student.collection.save(student)
-                            .then( res => 
+                            .then(() => 
                                 {
                                     console.log(`updated coursework ${courseworkId} within student ${studentNo} courseworks collection.`);
                                 })
