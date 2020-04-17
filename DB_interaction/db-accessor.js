@@ -20,24 +20,26 @@ class DAO {
 
     /* Functional methods - expose the classes concrete functionality */
 
-    add_student(name, username, password, courseworks, courses) {
+    add_student(name, username, passwordHash, courseworks, courses) {
         // Add new students to the database
         
         var add_student_run_indicator = "add_student"
-        var hash = bcrypt.hashSync(password, saltrounds);
+        var hash = bcrypt.hashSync(passwordHash, saltrounds);
         this.process_queue.push(add_student_run_indicator)
         this._init_db();
 
-        // Indicate we've stopped running the add student process.
+        // Returns a promise object containing the outcome of the whole 'add student' operation
+        // This will be used by the controller to determine which page the user should be redirected to.
         return new Promise((resolve, reject) => {
-            var outcome = "";
+            var outcome = ""; // Initially defines the outcome as a blank String.
             this.get_model_items(models.Student).then(students => {
                 var studentNum = students.length + 1
                 for(var i = 0; i < students.length; i++) {
                     if(students[i].username === username) {
-                        outcome = 0;
+                        outcome = 0; // Outcome = 0 represents a user already exists under the specified username.
                         resolve(outcome);
-                        return outcome;
+                        return outcome; // Outcome returns as well as resolving to stop the rest of the code from running: 
+                                        // Don't want duplicate users to be added to the database!
                     }
                 }
                 var student_to_add = new models.Student

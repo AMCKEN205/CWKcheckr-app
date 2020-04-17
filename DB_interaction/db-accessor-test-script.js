@@ -1,6 +1,9 @@
 const db_accessor = require('./db-accessor');
 
 dao = new db_accessor.DAO();
+
+//This test should return an empty array named 'students' since 'doesn't exist' is not a real username. 
+//The length of this array should be 0 as a result.
 var get_username_find_doc = 
 {
     "username" : "doesn't exist"
@@ -8,6 +11,10 @@ var get_username_find_doc =
 dao.get_model_items(db_accessor.models.Student, get_username_find_doc).then(students => {
     console.log(students.length)
 });
+
+//dao.get_model_items(db_accessor.models.Student).then(students => {
+  //  console.log(students)
+//});
 
 //dao.get_model_items(db_accessor.models.Course).then(courses => {
   //  console.log(courses)

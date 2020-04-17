@@ -17,16 +17,20 @@ usersRouter.post('/', function (req,res) {
   var username = body.registerUsername;
   var password = body.registerPassword;
   dao.add_student(fullname, username, password).then(outcome => {
+    //When the outcome = 0, this represents a user already existing in the DB with the entered username. 
+    //The user is then redirected to the register page to try again.
     if(outcome == 0){
       var userexists = encodeURIComponent(true);
       res.redirect('/register?userexists=' + userexists);
       return;
     }
+    //When outcome = false, this shows that a backend/DB error has occurred. This results in the user being redirected to an error page
     if(outcome == false) {
       var dberror = encodeURIComponent(true);
       res.redirect('/register?dberror=' + dberror);
       return;
     }
+    //When outcome = true, the registration process completed successfully and the user is redirected to the login page.
     if(outcome == true) {
       res.redirect('/reg-success');
       return;

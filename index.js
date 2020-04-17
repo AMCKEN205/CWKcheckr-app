@@ -27,6 +27,7 @@ app.use(session({ secret: "It's a secret to everyone!", resave: false, saveUnini
 auth.init(app);
 
 app.use(middleware.requestLogger)//log requests
+app.use(middleware.sessionLogger)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 app.use('/api', apiRouter)
