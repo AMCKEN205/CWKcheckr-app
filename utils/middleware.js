@@ -10,6 +10,12 @@ const requestLogger = (request, response, next) => {
   next()
 }
 
+const sessionLogger = (request, response, next) => {
+  console.log(request.session);
+  next();
+}
+
 module.exports = {
-  requestLogger
+  requestLogger,
+  sessionLogger
 }
