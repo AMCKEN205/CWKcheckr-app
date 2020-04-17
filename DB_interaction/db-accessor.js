@@ -352,12 +352,12 @@ class DAO {
     }
 
     edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate){
-        // Remove a coursework from a student
+        // Edit a coursework within a student document
 
-        // Indicate we've started running the remove coursework from student process. 
-        var add_coursework_run_indicator = "remove_coursework_from_student"
+        // Indicate we've started running the edit coursework in student process. 
+        var edit_coursework_run_indicator = "edit_student_coursework"
 
-        this.process_queue.push(add_coursework_run_indicator)
+        this.process_queue.push(edit_coursework_run_indicator)
 
         this._init_db()
 
@@ -421,8 +421,78 @@ class DAO {
                 console.log(err);
                 console.log(`coursework ${courseworkId} not found in student ${studentNo} within students collection, see error above.`);
                 return err
-            })
+            });
     }
+
+    delete_coursework_from_student(studentNo, courseworkId){
+        // Remove a coursework from a student document
+
+        // Indicate we've started running the remove coursework from student process. 
+        var delete_coursework_run_indicator = "delete_student_coursework"
+
+        this.process_queue.push(delete_coursework_run_indicator)
+
+        this._init_db()
+
+        var get_student_no_find_doc = 
+        {
+            "studentNo" : {$in : [studentNo]}
+        }
+        this.get_model_items(models.Student, get_student_no_find_doc)
+            .then(students => 
+            {
+                if (students.length == 0)
+                {
+                    throw "Attempted to delete a coursework of a non-existent student!"
+                }
+                else
+                {
+
+                    var student_no_get_doc = {
+                        "studentNo" : studentNo
+                    }
+
+                    models.Student.collection.findOne(student_no_get_doc).then(student => 
+                        {
+                            var courseworks = student.courseworks
+                            for ( var i=0; i < courseworks.length; i++ ) {
+                                if (courseworks[i].courseworkId == courseworkId) {
+                                    courseworks.splice(i,1)
+                                }
+                            }
+                            models.Student.collection.save(student)
+                            .then(() => 
+                                {
+                                    console.log(`deleted coursework ${courseworkId} within student ${studentNo} courseworks collection.`);
+                                })
+                            .catch(err =>
+                            {
+                                // return error to outer promise scope, which will then move onto closing db connection.
+                                // Would prefer to rethrow to avoid duplicate code but seems to be causing issues with outer catch.
+                                console.log(err);
+                                console.log(`coursework ${courseworkId} not found in student ${studentNo} within students collection, see error above.`);
+                                return err
+                            })
+                            .then(() => 
+                            {
+                                // Always close the database connection, 
+                                // regardless as to the success or failure of the operation
+                                
+                                // Indicate we've stopped running the add coursework process. 
+                                this.process_queue.shift();
+                                this._close_db_connection();
+                            });
+                        });
+                }
+            })
+            .catch(err => 
+            {
+                console.log(err);
+                console.log(`coursework ${courseworkId} not found in student ${studentNo} within students collection, see error above.`);
+                return err
+            });
+    }
+
     get_model_items(model, query_doc={}, projection_doc=null) {
         // Gets all the entries for the passed in model.
         // e.g. if the student model is passed in gets the student entries.
