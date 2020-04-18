@@ -2,6 +2,7 @@ const express = require('express');
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
 const viewsRouter = require('./controllers/views')
+const courseworkRouter = require('./controllers/coursework')
 const apiRouter = require('./controllers/api')
 const middleware = require('./utils/middleware')
 const passport = require('passport');
@@ -30,6 +31,7 @@ app.use(middleware.requestLogger)//log requests
 app.use(middleware.sessionLogger)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
+app.use('/api/cwk', courseworkRouter)
 app.use('/api', apiRouter)
 app.use('/', viewsRouter)
 

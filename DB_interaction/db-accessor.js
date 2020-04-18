@@ -147,7 +147,8 @@ class DAO {
             }
             else
             {
-                coursework_to_add.save();
+                //coursework_to_add.save();
+                models.Coursework.collection.save(coursework_to_add);
                 console.log(`coursework ${coursework_to_add.courseId} saved to courseworks collection.`);
             }
         })
