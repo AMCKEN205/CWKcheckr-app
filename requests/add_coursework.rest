@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/cwk/add
+Content-Type: application/json
+
+{
+  "courseId": 1,
+  "courseworkName": "The science of deduction",
+  "courseworkDescription": "Some BS from sherlock Holmes",
+  "dueDate": "2021-08-03T23:00:00.000Z"
+}
