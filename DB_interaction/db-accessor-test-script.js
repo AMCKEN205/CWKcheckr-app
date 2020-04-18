@@ -48,13 +48,13 @@ dao = new db_accessor.DAO();
 // )
 
 // should pass
-// dao.add_coursework(
-//     1,
-//     1,
-//     "Test coursework",
-//     "A test coursework",
-//     new Date(2020, 07, 04)
-// )
+dao.add_coursework(
+    2,
+    1,
+    "Test coursework",
+    "A test coursework",
+    new Date(2020, 07, 04)
+)
 
 // // should fail
 // dao.add_course_to_student(1, 2)
