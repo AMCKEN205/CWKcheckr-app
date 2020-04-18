@@ -8,10 +8,10 @@ var student_schema = new mongoose.Schema({
     username: String,
     passwordHash: String,
     courseworks: [{
-                    courseWorkId: Number
+                    courseWorkId: Number, courseworkName: String, completionDate: Date, milestones : Array
                 }],
     courses: [{
-                courseId: Number
+                courseId: Number, courseName: String
             }]
 });
 
