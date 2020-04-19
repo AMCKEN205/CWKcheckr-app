@@ -273,7 +273,7 @@ class DAO {
                 "courseId" : {$in : [courseId]}
             };
     
-            var get_courseworks_projection_doc = {_id : 0, courseworkId : 1, courseworkName : 1, dueDate : 1}
+            var get_courseworks_projection_doc = {_id : 0, courseworkId : 1, courseworkName : 1, courseworkDescription : 1, dueDate : 1}
 
             this.get_model_items(models.Coursework, get_coursework_ids_find_doc, get_courseworks_projection_doc)
             .then(courseworks => {
@@ -282,6 +282,7 @@ class DAO {
                     throw "Attempted to link a non-existent coursework to a student!";
                 }
                 var courseworkName = courseworks[0].courseworkName
+                var courseworkDescription = courseworks[0].courseworkDescription;
                 var dueDate = courseworks[0].dueDate
                 var get_student_no_find_doc = 
                 {
@@ -306,6 +307,8 @@ class DAO {
                                     "courseworks" : {
                                         courseworkId: courseworkId, 
                                         courseworkName: courseworkName, 
+                                        courseworkDescription: courseworkDescription,
+                                        courseId: courseId,
                                         completionDate: completion_date_inital_set, 
                                         milestones: milestones_inital_set,
                                         dueDate : dueDate

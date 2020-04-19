@@ -74,41 +74,32 @@ viewsRouter.get('/', ensureLoggedIn('/login'), function (request, response) {
         console.log(session_id);
         var student_name = "";
         var student_courses = [];
-        var student_course_ids = [];
         var student_courseworks = [];
-        var student_coursework_ids = [];
         for(var i = 0; i < students.length; i++) {
             if(students[i].studentNo === session_id) {
                 student_name = students[i].name;
-                student_course_ids = students[i].courses;
-                student_coursework_ids = students[i].courseworks;
+                student_courses = students[i].courses;
+                student_courseworks = students[i].courseworks;
+                for(var j = 0; j < student_courseworks.length; j++) {
+                    console.log(student_courseworks[j].dueDate);
+                    for (var k = 0; k < student_courses.length; k++) {
+                        if(student_courseworks[j].courseId === student_courses[k].courseId) {
+                            console.log("poo");
+                            student_courseworks[j].courseName = student_courses[k].courseName;
+                        }
+                    }
+                }
+                console.log(student_courseworks[0].dueDate);
+                console.log(student_courseworks);
                 break;
             }
         }
-        var courses_find = {"courseId" : student_course_ids};
-        var courses_proj_doc = {_id : 0, courseName : 1, courseDescription : 1};
-        dao.get_model_items(db_accessor.models.Course, courses_find, courses_proj_doc).then(courses => {
-                student_courses = courses 
-                var courseworks_find = {"courseworkId" : student_coursework_ids};
-                dao.get_model_items(db_accessor.models.Coursework, courseworks_find).then(courseworks => {
-                    for(var i = 0; i < courseworks.length; i++){
-                        for(var j = 0; j < student_courses; i++) {
-                            if(courseworks[i].courseId === student_courses[j].courseId) {
-                                courseworks[i].courseId = student_courses[j].courseName;
-                                break;
-                            }
-                        }
-                    }
-                    student_courseworks =  courseworks;
-                    response.render("home", {
-                        "page" : "CWKCheckr Home Page",
-                        "Student" : student_name,
-                        "Courses" : student_courses,
-                        "Coursework" : student_courseworks
-                    });
-                });
+        response.render("home", {
+            "page" : "CWKCheckr Home Page",
+            "Student" : student_name,
+            "Courses" : student_courses,
+            "Coursework" : student_courseworks
         });
-
     }).catch(err => {
         console.log(err);
         console.log("Could not retrieve student, see error above.");
@@ -168,6 +159,37 @@ viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request,
                 "Due Date" : "5/04/20"
             }
         ]
+    });
+});
+
+viewsRouter.get("/add-coursework", ensureLoggedIn('/login'), function(request, response) {
+    var session_id = request.session.passport.user;
+    var loggedInStudent = {
+        "studentNo" : session_id
+    };
+    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+        courses = [];
+        for (var i = 0; i < students.length; i++) {
+            console.log(students[i].courses);
+            courses = students[i].courses;
+        }
+            
+        response.render("add-coursework", {
+            "page" : "Add Coursework",
+            "courses" : courses
+        });
+    });
+});
+
+viewsRouter.get("/edit-coursework", ensureLoggedIn('/login'), function(request, response) {
+    response.render("edit-coursework", {
+        "page" : "Edit Coursework"
+    });
+});
+
+viewsRouter.get("/remove-coursework", ensureLoggedIn('/login'), function(request, response) {
+    response.render("remove-coursework", {
+        "page" : "Remove Coursework"
     });
 });
 
