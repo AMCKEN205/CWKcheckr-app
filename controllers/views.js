@@ -80,15 +80,6 @@ viewsRouter.get('/', ensureLoggedIn('/login'), function (request, response) {
                 student_name = students[i].name;
                 student_courses = students[i].courses;
                 student_courseworks = students[i].courseworks;
-                for(var j = 0; j < student_courseworks.length; j++) {
-                    console.log(student_courseworks[j].dueDate);
-                    for (var k = 0; k < student_courses.length; k++) {
-                        if(student_courseworks[j].courseId === student_courses[k].courseId) {
-                            console.log("poo");
-                            student_courseworks[j].courseName = student_courses[k].courseName;
-                        }
-                    }
-                }
                 console.log(student_courseworks[0].dueDate);
                 console.log(student_courseworks);
                 break;
@@ -105,61 +96,47 @@ viewsRouter.get('/', ensureLoggedIn('/login'), function (request, response) {
         console.log("Could not retrieve student, see error above.");
         response.render("home", {
             "page" : "CWKCheckr Home Page",
-            "Student" : student_name,
-            "Courses" : student_courses,
-            "Coursework" : student_courseworks
+            "Student" : [],
+            "Courses" : [],
+            "Coursework" : []
         });
     });
 });
 
 viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request, response) {
-    response.render("view-coursework", {
-        "page" : "CWKCheckr View Coursework",
-        "Complete Coursework" : [],
-        "Incomplete Coursework" : [
-            {
-                "Course" : "Web Platform Development 2",
-                "Name" : "Coursework Tracker",
-                "Description" : "Design a web application to track and schedule coursework.",
-                "Milestones" : [
-                    {
-                        "Name" : "Mockup Screens",
-                        "Check" : [{
-                            "isChecked" : true
-                            }
-                        ]
-                    },
-                    {
-                        "Name" : "Initial Prototype",
-                    },
-                    {
-                        "Name" : "Final Submission",
-                    }
-                ],
-                "Due Date" : "26/04/20"
-            },
-            {
-                "Course" : "Cloud Platform Development",
-                "Name" : "AWS AI Image analysis",
-                "Description" : "Build an app in AWS which takes in images and uses machine learning to recognise their contents.",
-                "Milestones" : [
-                    {
-                        "Name" : "Python Scripts",
-                    },
-                    {
-                        "Name" : "Image Recognition",
-                    },
-                    {
-                        "Name" : "Lambda Functions",
-                    },
-                    {
-                        "Name" : "Final Submission",
-                    }
-                ],
-                "Due Date" : "5/04/20"
+    var session_id = request.session.passport.user;
+    var loggedInStudent = {
+        "studentNo" : session_id
+    };
+    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+        complete_courseworks = [];
+        incomplete_courseworks =[];
+        for (var i = 0; i < students.length; i++) {
+            for(var j = 0; j < students[i].courseworks.length; j++) {
+                if(students[i].courseworks[j].completionDate != null) {
+                    console.log(students[i].courseworks[j]);
+                    complete_courseworks.push(students[i].courseworks[j]);
+                } else {
+                    console.log(students[i].courseworks[j]);
+                    incomplete_courseworks.push(students[i].courseworks[j]);
+                }
             }
-        ]
+        }
+        response.render("view-coursework", {
+            "page" : "CWKCheckr View Coursework",
+            "Complete Coursework" : complete_courseworks,
+            "Incomplete Coursework" : incomplete_courseworks
+        });
+    }).catch(error => {
+        console.log(error);
+        console.log("could not retrieve student, see error above");
+        response.render("view-coursework", {
+            "page" : "CWKCheckr View Coursework",
+            "Complete Coursework" : [],
+            "Incomplete Coursework" : []
+        }); 
     });
+    
 });
 
 viewsRouter.get("/add-coursework", ensureLoggedIn('/login'), function(request, response) {
@@ -178,19 +155,66 @@ viewsRouter.get("/add-coursework", ensureLoggedIn('/login'), function(request, r
             "page" : "Add Coursework",
             "courses" : courses
         });
+    }).catch(error => {
+        console.log(error);
+        console.log("could not retrieve student, see error above");
+        response.render("add-coursework", {
+            "page" : "Add Coursework",
+            "courses" : []
+        }); 
     });
 });
 
 viewsRouter.get("/edit-coursework", ensureLoggedIn('/login'), function(request, response) {
-    response.render("edit-coursework", {
-        "page" : "Edit Coursework"
+    var session_id = request.session.passport.user;
+    var loggedInStudent = {
+        "studentNo" : session_id
+    };
+    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+        courseworks = [];
+        for (var i = 0; i < students.length; i++) {
+            console.log(students[i].courseworks);
+            courseworks = students[i].courseworks;
+        }
+            
+        response.render("edit-coursework", {
+            "page" : "Edit Coursework",
+            "courseworks" : courseworks
+        });
+    }).catch(error => {
+        console.log(error);
+        console.log("could not retrieve student, see error above");
+        response.render("edit-coursework", {
+            "page" : "Edit Coursework",
+            "courseworks" : []
+        }); 
     });
 });
 
 viewsRouter.get("/remove-coursework", ensureLoggedIn('/login'), function(request, response) {
-    response.render("remove-coursework", {
-        "page" : "Remove Coursework"
-    });
+    var session_id = request.session.passport.user;
+    var loggedInStudent = {
+        "studentNo" : session_id
+    };
+    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+        courseworks = [];
+        for (var i = 0; i < students.length; i++) {
+            console.log(students[i].courseworks);
+            courseworks = students[i].courseworks;
+        }
+            
+        response.render("remove-coursework", {
+            "page" : "Remove Coursework",
+            "courseworks" : courseworks
+        });
+    }).catch(error => {
+        console.log(error);
+        console.log("could not retrieve student, see error above");
+        response.render("remove-coursework", {
+            "page" : "Remove Coursework",
+            "courseworks" : []
+        }); 
+    });;
 });
 
 // 404 catch-all handler (bad request)

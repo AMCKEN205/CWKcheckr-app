@@ -302,6 +302,14 @@ class DAO {
                             // Indicates the coursework has yet to be completed.
                             var completion_date_inital_set = null
                             var milestones_inital_set = []
+                            var courseName = "";
+                            for (var i = 0; i < students[0].courses.length; i++) {
+                                if(courseId === students[0].courses[i].courseId) {
+                                    console.log("poo");
+                                    courseName = students[0].courses[i].courseName;
+                                    break;
+                                }
+                            }
 
                             var student_courses_update_doc = {$push : {
                                     "courseworks" : {
@@ -309,6 +317,7 @@ class DAO {
                                         courseworkName: courseworkName, 
                                         courseworkDescription: courseworkDescription,
                                         courseId: courseId,
+                                        courseName: courseName,
                                         completionDate: completion_date_inital_set, 
                                         milestones: milestones_inital_set,
                                         dueDate : dueDate

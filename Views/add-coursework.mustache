@@ -28,17 +28,15 @@
         function removeMilestone(div) {
             document.getElementById("milestoneDiv").removeChild(div.parentNode);
         }
-    </script>
-    <script>
 
-    <!-- Ajax function which sends the current value of the course select combobox option to the ajax controller.
-        The courseworks which belong to the selected course are then generated and inserted into the coursework select combobox. -- >
+        //Ajax function which sends the current value of the course select combobox option to the ajax controller. -->
+        //The courseworks which belong to the selected course are then generated and inserted into the coursework select combobox. -- >
 
         $(document).ready(function(){
 
-            <!-- function invoked once the document is loaded -->
+            //function invoked once the document is loaded
 
-            $.ajax({url: "/api/ajax", 
+            $.ajax({url: "/api/ajax-add", 
                         type: "GET",
                         data: {course: $('#courseSelect').val()},
                 success: function(result){
@@ -47,9 +45,9 @@
                 }});
         $('#courseSelect').change(function() {
             
-            <!-- function invoked when the course select combobox value is changed by the user -->
+            //function invoked when the course select combobox value is changed by the user
 
-                $.ajax({url: "/api/ajax", 
+                $.ajax({url: "/api/ajax-add", 
                         type: "GET",
                         data: {course: $('#courseSelect').val()},
                 success: function(result){

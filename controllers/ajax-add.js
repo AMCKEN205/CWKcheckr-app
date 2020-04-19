@@ -1,11 +1,11 @@
-const ajaxRouter = require('express').Router()
+const ajaxAddRouter = require('express').Router()
 const db_accessor = require('../DB_interaction/db-accessor')
 dao = new db_accessor.DAO();
 
 //This class is only ever requested through ajax callbacks. It is used to retrieve a list of courseworks based on the selected 
 //course ID.
 
-ajaxRouter.get('/', function(request, response) {
+ajaxAddRouter.get('/', function(request, response) {
     var course = request.query.course;
     var options = "";
      var get_courseworks_by_course_id = 
@@ -24,4 +24,4 @@ ajaxRouter.get('/', function(request, response) {
     });
 });
 
-module.exports = ajaxRouter;
+module.exports = ajaxAddRouter;
