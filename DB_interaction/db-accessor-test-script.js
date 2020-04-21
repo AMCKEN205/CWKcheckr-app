@@ -12,18 +12,25 @@ dao = new db_accessor.DAO();
 //     console.log(students.length)
 // });
 
-//dao.get_model_items(db_accessor.models.Student).then(students => {
-  //  console.log(students)
-//});
+// dao.get_model_items(db_accessor.models.Student,{"courses":{$elemMatch: {"courseId": 1}}} ).then(students => {
+//    console.log(students)
+// });
 
-//dao.get_model_items(db_accessor.models.Course).then(courses => {
-  //  console.log(courses)
-//});
+// dao.get_model_items(db_accessor.models.Student, {"courseworks":{$elemMatch: {"courseworkId": 4}}} ).then(students => {
+//   //console.log(students)
+//   console.log(students[0].courseworks.find(elem=> toString(elem.courseworkId) === toString(4)))
+// });
+//
+/* 
+dao.get_model_items(db_accessor.models.Course).then(courses => {
+   console.log(courses)
+}); */
 
 //dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
   //  console.log(courseworks)
 //});
 
+//add_student(name, username, passwordHash, courseworks, courses)
 // dao.add_student(
 //     1, 
 //     "Bob", 
@@ -31,13 +38,15 @@ dao = new db_accessor.DAO();
 //     "1234"
 //     );
 
-// dao.add_course(
-//     1,
-//     "test course",
-//     "test teacher",
-//     "test description"
-// )
+//add_course(courseId, courseName, courseTeacher, courseDescription) 
+/*dao.add_course(
+    4,
+    "Course Four",
+    "teacher Four",
+    "description Four"
+)*/
 
+//add_coursework(courseworkId, courseId, courseworkName, courseworkDescription, dueDate)
 //should fail
 // dao.add_coursework(
 //     1,
@@ -48,29 +57,33 @@ dao = new db_accessor.DAO();
 // )
 
 // should pass
-dao.add_coursework(
+/*dao.add_coursework(
     2,
     1,
     "Test coursework",
     "A test coursework",
     new Date(2020, 07, 04)
-)
+)*/
 
+//add_course_to_student(studentNo, courseId)
 // // should fail
 // dao.add_course_to_student(1, 2)
 // dao.add_course_to_student(2, 1)
 
-// // should pass
-// dao.add_course_to_student(1, 1)
+// should pass //add_course_to_student(studentNo, courseId)
+//dao.add_course_to_student(2, 4)
 
+//add_coursework_to_student(studentNo, courseId, courseworkId)
 // should fail
 //dao.add_coursework_to_student(2, 1, 1)
 //dao.add_coursework_to_student(1, 2, 1)
 //dao.add_coursework_to_student(1, 1, 2)
 
-// should pass
-//dao.add_coursework_to_student(1, 1, 1)
+// should pass //add_coursework_to_student(studentNo, courseId, courseworkId)
+//dao.add_coursework_to_student(2,2,2)
 
-//dao.edit_coursework_in_student(1, 1, "Test coursework", new Date(2021,10,30), ["started!","done!","quickscoped"], new Date(2021,11,30))
+//edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate)
+//dao.edit_coursework_in_student(1, 1, "Test coursework Uno", new Date(2021,10,30), ["started!","done!","quickscoped"], new Date(2021,11,30))
 
+//delete_coursework_from_student(studentNo, courseworkId)
 //dao.delete_coursework_from_student(1, 1)

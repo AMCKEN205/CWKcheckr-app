@@ -2,8 +2,9 @@ POST http://localhost:3001/api/cwk/add
 Content-Type: application/json
 
 {
+  "studentNo": 1,
   "courseId": 1,
-  "courseworkName": "The science of deduction",
-  "courseworkDescription": "Some BS from sherlock Holmes",
+  "courseworkName": "CWK Five",
+  "courseworkDescription": "Lets see if {{$randomInt 1 100}} ----- {{$localDatetime iso8601}}",
   "dueDate": "2021-08-03T23:00:00.000Z"
 }
