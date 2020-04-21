@@ -20,6 +20,7 @@ const createCourseWorkId = () => {
 
 courseworkRouter.post('/add', (request, response) => {// add coursework and ad it to a course and attach it to a student
   const body = request.body
+  //TODO change all body.studentNo to the appopriate thing
   const studentNo = body.studentNo || request.session.passport.user
 
   //initialise the parameters necessary to create a coursework
@@ -65,13 +66,23 @@ courseworkRouter.post('/add', (request, response) => {// add coursework and ad i
 
 
 courseworkRouter.post('/update', (request, response) => {
-  //find cousework
+  //find coursework
   //make everything same except what is being changed
   //update the coursework
   //if successful, redirect them to a page where it shows that coursework updated or home
   const body = request.body
   const courseworkId= body.courseworkId
+  //TODO change all body.studentNo to the appopriate thing
   const studentNo = body.studentNo || request.session.passport.user
+
+   //check request has courseworkId and studentNo (or sessionId)
+
+   if (!courseworkId ||!studentNo) {
+    console.log(("----------------------courseworkId " + body.courseworkId + "studentNo " +studentNo))
+    response.status(405)
+    response.send("courseworkId or sessionId missing.")
+    return
+  }
 
   //since only the courseworks in the Students Obj is updted, I have to find
   //that student and make the update there. As opposed to doing it in the global 
@@ -79,7 +90,7 @@ courseworkRouter.post('/update', (request, response) => {
   //anymore. 
   dao.get_model_items(db_accessor.models.Student, {"courseworks":{$elemMatch: {"courseworkId": courseworkId}}} )
   .then(students =>{
-    let cwk = students[0].courseworks.find(elem=> toString(elem.courseworkId) === toString(4))
+    let cwk = students[0].courseworks.find(elem=> toString(elem.courseworkId) === toString(courseworkId))
     console.log("the found cwk----------------------------",cwk)
     
     let update = {
@@ -96,51 +107,49 @@ courseworkRouter.post('/update', (request, response) => {
     dao.edit_coursework_in_student(studentNo, courseworkId, update.courseworkName, update.completionDate, update.milestones, update.dueDate)
   })
 
-  //edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate)
-  
-
+  //TODO: Redirect to page that shows the updated cwk or all cwks
+  response.status(202)
 });
 
-courseworkRouter.post('/remove', (request, response) => {
-  //find cousework 
+courseworkRouter.delete('/remove', (request, response) => {
+  //find coursework in student obj
   //delete the coursework
-  //if successful, redirect them to a page where it shows that coursework deleted or home
+  //if successful, redirect them to a page where it shows that coursework deleted or home or just say it is deleted
   const body = request.body
+  const courseworkId= body.courseworkId
+  //TODO change all body.studentNo to the appopriate thing
+  const studentNo = body.studentNo || request.session.passport.user
+
+
+  //check request has courseworkId and studentNo or sessionId
+  if (!courseworkId ||!studentNo) {
+  console.log(("----------------------courseworkId " + body.courseworkId + "studentNo " +studentNo))
+  response.status(405)
+  response.send("courseworkId or sessionId missing.")
+  return
+  }
+
+  dao.delete_coursework_from_student(studentNo,courseworkId)
+
+  response.status(202)
+  response.send(
+    `<html>
+    <body>
+      <h1>coursework deleted.</h1> 
+    </body>
+  </html>`)
+  //delete_coursework_from_student(studentNo, courseworkId)
 });
 
 
-
-/**var course_schema = new mongoose.Schema({
-    courseId: Number,
-    courseName: String,
-    courseTeacher: String,
-    courseDescription: String
-});
-
-var coursework_schema = new mongoose.Schema({
-    courseworkId: Number,
-    courseId: Number,
-    courseworkName: String,
-    courseworkDescription: String,
-    dueDate: Date
-}); */
-//********************** Ignore this below. Ohe used it to figure out how the db works********
-courseworkRouter.get('/', (request, response) => { 
+courseworkRouter.get('/', (request, response) => {
   dao.get_model_items(db_accessor.models.Coursework).then(
     cwk => {
       //console.log('last coursework number -----------------',cwk.slice(-1)[0].courseworkId)
       //console.log(cwk.slice(-1)[0].courseworkId + 1)
-     response.send(cwk)
+      response.send(cwk)
     }
   )
-  
- });
-
-
-
-
-//********************** Ignore this above. Ohe used it to figure out how the db works********
-
-
+});
 
 module.exports = courseworkRouter
