@@ -136,26 +136,9 @@ courseworkRouter.get('/', (request, response) => {
   
  });
 
- courseworkRouter.get('/course', (request, response) => { 
-  dao.get_model_items(db_accessor.models.Course).then(
-    course => {
-      console.log(course)
-     response.send(course)
-    }
-  )
-  
- });
 
- courseworkRouter.get('/student', (request, response) => { 
-  dao.get_model_items(db_accessor.models.Student).then(
-    student => {
-      //console.log(student)
-      console.log('last students number -----------------',student.slice(-1)[0].studentNo)
-      console.log(student.slice(-1)[0].studentNo + 1)
-     response.send(student.slice(-1))
-    }
-  )
- });
+
+
 //********************** Ignore this above. Ohe used it to figure out how the db works********
 
 
