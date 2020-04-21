@@ -12,16 +12,18 @@ dao = new db_accessor.DAO();
 //     console.log(students.length)
 // });
 
-//dao.get_model_items(db_accessor.models.Student).then(students => {
-  //  console.log(students)
-//});
+dao.get_model_items(db_accessor.models.Student).then(students => {
+    for(var i = 0; i < students.length; i++) {
+      console.log(students[i].courseworks)
+    }
+});
 
 //dao.get_model_items(db_accessor.models.Course).then(courses => {
-  //  console.log(courses)
+//    console.log(courses)
 //});
 
 //dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
-  //  console.log(courseworks)
+//    console.log(courseworks)
 //});
 
 // dao.add_student(
@@ -61,7 +63,7 @@ dao.add_coursework(
 // dao.add_course_to_student(2, 1)
 
 // // should pass
-// dao.add_course_to_student(1, 1)
+ //dao.add_course_to_student(4, 1)
 
 // should fail
 //dao.add_coursework_to_student(2, 1, 1)
@@ -69,8 +71,8 @@ dao.add_coursework(
 //dao.add_coursework_to_student(1, 1, 2)
 
 // should pass
-//dao.add_coursework_to_student(1, 1, 1)
+//dao.add_coursework_to_student(4, 1, 2)
 
 //dao.edit_coursework_in_student(1, 1, "Test coursework", new Date(2021,10,30), ["started!","done!","quickscoped"], new Date(2021,11,30))
 
-//dao.delete_coursework_from_student(1, 1)
+//dao.delete_coursework_from_student(4, 2)
