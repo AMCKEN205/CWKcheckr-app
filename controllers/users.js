@@ -41,5 +41,14 @@ usersRouter.post('/', function (req,res) {
     res.redirect('/register');
   });
 })
+usersRouter.get('/students', (request, response) => { 
+  dao.get_model_items(db_accessor.models.Student).then(
+    students => {
+      //console.log(student)
+      console.log('all students -----------------',students)
+     response.send(students)
+    }
+  )
+ });
 
 module.exports = usersRouter;
