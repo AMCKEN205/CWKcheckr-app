@@ -1,6 +1,11 @@
 const express = require('express');
 const usersRouter = require('./controllers/users')
 const loginRouter = require('./controllers/login')
+const ajaxAddRouter = require('./controllers/ajax-add')
+const ajaxEditRouter = require('./controllers/ajax-edit')
+const addCourseworkRouter = require('./controllers/add-coursework')
+const editCourseworkRouter = require('./controllers/edit-coursework')
+const removeCourseworkRouter = require('./controllers/remove-coursework')
 const viewsRouter = require('./controllers/views')
 const courseRouter = require('./controllers/course')
 const courseworkRouter = require('./controllers/coursework')
@@ -32,8 +37,14 @@ app.use(middleware.requestLogger)//log requests
 app.use(middleware.sessionLogger)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
+
 app.use('/api/cwk', courseworkRouter)
 app.use('/api/course', courseRouter)
+app.use('/api/ajax-add', ajaxAddRouter)
+app.use('/api/ajax-edit', ajaxEditRouter)
+app.use('/api/add-coursework', addCourseworkRouter)
+app.use('/api/edit-coursework', editCourseworkRouter)
+app.use('/api/remove-coursework', removeCourseworkRouter)
 app.use('/api', apiRouter)
 app.use('/', viewsRouter)
 

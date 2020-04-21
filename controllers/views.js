@@ -75,101 +75,147 @@ viewsRouter.get('/', function (request, response) {
         console.log(session_id);
         var student_name = "";
         var student_courses = [];
-        var student_course_ids = [];
         var student_courseworks = [];
-        var student_coursework_ids = [];
         for(var i = 0; i < students.length; i++) {
             if(students[i].studentNo === session_id) {
                 student_name = students[i].name;
-                student_course_ids = students[i].courses;
-                student_coursework_ids = students[i].courseworks;
+                student_courses = students[i].courses;
+                student_courseworks = students[i].courseworks;
+                console.log(student_courseworks[0].dueDate);
+                console.log(student_courseworks);
                 break;
             }
         }
-        var courses_find = {"courseId" : student_course_ids};
-        var courses_proj_doc = {_id : 0, courseName : 1, courseDescription : 1};
-        dao.get_model_items(db_accessor.models.Course, courses_find, courses_proj_doc).then(courses => {
-                student_courses = courses 
-                var courseworks_find = {"courseworkId" : student_coursework_ids};
-                dao.get_model_items(db_accessor.models.Coursework, courseworks_find).then(courseworks => {
-                    for(var i = 0; i < courseworks.length; i++){
-                        for(var j = 0; j < student_courses; i++) {
-                            if(courseworks[i].courseId === student_courses[j].courseId) {
-                                courseworks[i].courseId = student_courses[j].courseName;
-                                break;
-                            }
-                        }
-                    }
-                    student_courseworks =  courseworks;
-                    response.render("home", {
-                        "page" : "CWKCheckr Home Page",
-                        "Student" : student_name,
-                        "Courses" : student_courses,
-                        "Coursework" : student_courseworks
-                    });
-                });
-        });
-
-    }).catch(err => {
-        console.log(err);
-        console.log("Could not retrieve student, see error above.");
         response.render("home", {
             "page" : "CWKCheckr Home Page",
             "Student" : student_name,
             "Courses" : student_courses,
             "Coursework" : student_courseworks
         });
+    }).catch(err => {
+        console.log(err);
+        console.log("Could not retrieve student, see error above.");
+        response.render("home", {
+            "page" : "CWKCheckr Home Page",
+            "Student" : [],
+            "Courses" : [],
+            "Coursework" : []
+        });
     });
 });
 
 viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request, response) {
-    response.render("view-coursework", {
-        "page" : "CWKCheckr View Coursework",
-        "Complete Coursework" : [],
-        "Incomplete Coursework" : [
-            {
-                "Course" : "Web Platform Development 2",
-                "Name" : "Coursework Tracker",
-                "Description" : "Design a web application to track and schedule coursework.",
-                "Milestones" : [
-                    {
-                        "Name" : "Mockup Screens",
-                        "Check" : [{
-                            "isChecked" : true
-                            }
-                        ]
-                    },
-                    {
-                        "Name" : "Initial Prototype",
-                    },
-                    {
-                        "Name" : "Final Submission",
-                    }
-                ],
-                "Due Date" : "26/04/20"
-            },
-            {
-                "Course" : "Cloud Platform Development",
-                "Name" : "AWS AI Image analysis",
-                "Description" : "Build an app in AWS which takes in images and uses machine learning to recognise their contents.",
-                "Milestones" : [
-                    {
-                        "Name" : "Python Scripts",
-                    },
-                    {
-                        "Name" : "Image Recognition",
-                    },
-                    {
-                        "Name" : "Lambda Functions",
-                    },
-                    {
-                        "Name" : "Final Submission",
-                    }
-                ],
-                "Due Date" : "5/04/20"
+    var session_id = request.session.passport.user;
+    var loggedInStudent = {
+        "studentNo" : session_id
+    };
+    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+        complete_courseworks = [];
+        incomplete_courseworks =[];
+        for (var i = 0; i < students.length; i++) {
+            for(var j = 0; j < students[i].courseworks.length; j++) {
+                if(students[i].courseworks[j].completionDate != null) {
+                    console.log(students[i].courseworks[j]);
+                    complete_courseworks.push(students[i].courseworks[j]);
+                } else {
+                    console.log(students[i].courseworks[j]);
+                    incomplete_courseworks.push(students[i].courseworks[j]);
+                }
             }
-        ]
+        }
+        response.render("view-coursework", {
+            "page" : "CWKCheckr View Coursework",
+            "Complete Coursework" : complete_courseworks,
+            "Incomplete Coursework" : incomplete_courseworks
+        });
+    }).catch(error => {
+        console.log(error);
+        console.log("could not retrieve student, see error above");
+        response.render("view-coursework", {
+            "page" : "CWKCheckr View Coursework",
+            "Complete Coursework" : [],
+            "Incomplete Coursework" : []
+        }); 
     });
+    
+});
+
+viewsRouter.get("/add-coursework", ensureLoggedIn('/login'), function(request, response) {
+    var session_id = request.session.passport.user;
+    var loggedInStudent = {
+        "studentNo" : session_id
+    };
+    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+        courses = [];
+        for (var i = 0; i < students.length; i++) {
+            console.log(students[i].courses);
+            courses = students[i].courses;
+        }
+            
+        response.render("add-coursework", {
+            "page" : "Add Coursework",
+            "courses" : courses
+        });
+    }).catch(error => {
+        console.log(error);
+        console.log("could not retrieve student, see error above");
+        response.render("add-coursework", {
+            "page" : "Add Coursework",
+            "courses" : []
+        }); 
+    });
+});
+
+viewsRouter.get("/edit-coursework", ensureLoggedIn('/login'), function(request, response) {
+    var session_id = request.session.passport.user;
+    var loggedInStudent = {
+        "studentNo" : session_id
+    };
+    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+        courseworks = [];
+        for (var i = 0; i < students.length; i++) {
+            console.log(students[i].courseworks);
+            courseworks = students[i].courseworks;
+        }
+            
+        response.render("edit-coursework", {
+            "page" : "Edit Coursework",
+            "courseworks" : courseworks
+        });
+    }).catch(error => {
+        console.log(error);
+        console.log("could not retrieve student, see error above");
+        response.render("edit-coursework", {
+            "page" : "Edit Coursework",
+            "courseworks" : []
+        }); 
+    });
+});
+
+viewsRouter.get("/remove-coursework", ensureLoggedIn('/login'), function(request, response) {
+    var session_id = request.session.passport.user;
+    var loggedInStudent = {
+        "studentNo" : session_id
+    };
+    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+        courseworks = [];
+        for (var i = 0; i < students.length; i++) {
+            console.log(students[i].courseworks);
+            courseworks = students[i].courseworks;
+        }
+            
+        response.render("remove-coursework", {
+            "page" : "Remove Coursework",
+            "courseworks" : courseworks
+        });
+    }).catch(error => {
+        console.log(error);
+        console.log("could not retrieve student, see error above");
+        response.render("remove-coursework", {
+            "page" : "Remove Coursework",
+            "courseworks" : []
+        }); 
+    });;
 });
 
 // 404 catch-all handler (bad request)

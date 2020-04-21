@@ -12,6 +12,7 @@ dao = new db_accessor.DAO();
 //     console.log(students.length)
 // });
 
+
 // dao.get_model_items(db_accessor.models.Student,{"courses":{$elemMatch: {"courseId": 1}}} ).then(students => {
 //    console.log(students)
 // });
@@ -26,8 +27,9 @@ dao.get_model_items(db_accessor.models.Course).then(courses => {
    console.log(courses)
 }); */
 
+
 //dao.get_model_items(db_accessor.models.Coursework).then(courseworks => {
-  //  console.log(courseworks)
+//    console.log(courseworks)
 //});
 
 //add_student(name, username, passwordHash, courseworks, courses)
@@ -70,8 +72,10 @@ dao.get_model_items(db_accessor.models.Course).then(courses => {
 // dao.add_course_to_student(1, 2)
 // dao.add_course_to_student(2, 1)
 
+
 // should pass //add_course_to_student(studentNo, courseId)
 //dao.add_course_to_student(2, 4)
+
 
 //add_coursework_to_student(studentNo, courseId, courseworkId)
 // should fail
@@ -81,6 +85,7 @@ dao.get_model_items(db_accessor.models.Course).then(courses => {
 
 // should pass //add_coursework_to_student(studentNo, courseId, courseworkId)
 //dao.add_coursework_to_student(2,2,2)
+
 
 //edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate)
 //dao.edit_coursework_in_student(1, 1, "Test coursework Uno", new Date(2021,10,30), ["started!","done!","quickscoped"], new Date(2021,11,30))
