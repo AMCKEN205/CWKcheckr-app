@@ -33,10 +33,20 @@ editCourseworkRouter.post('/', function(request, response) {
     //console.log("students ------------------------" + students)
     let cwkArr = students[0].courseworks
     //console.log(cwkArr)
-    cwkArr.forEach(c => {
+
+ 
+     cwkArr.forEach(c => {
+      //console.log(c)
+      console.log(Object.keys(c))
+      console.log(Object.keys(c).map(str => str.split('').map(ch => ch.charCodeAt(0)).every(ch => ch <= 127 && ch >= 10)));
+      /*console.log(c.courseworkName)
+      console.log(c.courseworkI)
+      console.log("-*-*-*-*-*-*-*-**-*-*-*-*-*-*-*-*-*-*-*-*-*-")
+     console.log(toString(c.courseworkId))
       console.log(c.courseworkName)
-      console.log(c.courseworkName === courseworkName)
-      console.log(`${c.courseworkId} !== ${courseworkId}`)
+      console.log(c.courseworkDescription)
+      //console.log(c.courseworkName === courseworkName)
+      console.log(`${c.courseworkId} !== ${courseworkId}`)*/
     })
     /**.find(elem=> {
       console.log("found elem --------------------" +elem)
