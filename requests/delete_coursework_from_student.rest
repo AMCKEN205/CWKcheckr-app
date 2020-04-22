@@ -1,4 +1,4 @@
-DELETE http://localhost:3001/api/cwk/remove
+POST http://localhost:3001/api/remove-coursework
 Content-Type: application/json
 
 {

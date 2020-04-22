@@ -90,7 +90,7 @@ courseworkRouter.post('/update', (request, response) => {
   //anymore. 
   dao.get_model_items(db_accessor.models.Student, {"courseworks":{$elemMatch: {"courseworkId": courseworkId}}} )
   .then(students =>{
-    let cwk = students[0].courseworks.find(elem=> toString(elem.courseworkId) === toString(courseworkId))
+    let cwk = students[0].courseworks.find(elem=> toString(elem.courseworkName) === toString(courseworkId))
     console.log("the found cwk----------------------------",cwk)
     
     let update = {
@@ -104,7 +104,7 @@ courseworkRouter.post('/update', (request, response) => {
       //only completionDate, milestones, dueDate can be changed 
     }
     console.log('------------------------------new coursework', update)
-    dao.edit_coursework_in_student(studentNo, courseworkId, update.courseworkName, update.completionDate, update.milestones, update.dueDate)
+    //dao.edit_coursework_in_student(studentNo, courseworkId, update.courseworkName, update.completionDate, update.milestones, update.dueDate)
   })
 
   //TODO: Redirect to page that shows the updated cwk or all cwks

@@ -4,11 +4,11 @@ Content-Type: application/json
 
 {
   "studentNo": 1,
-  "courseworkId": 1,
-  "milestones": "team meeting"
+  "courseworkId": 5,
+  "milestones": "team meeting4"
 }
 
-
+# POST http://localhost:3001/api/edit-coursework
 #"courseworkDescription": "Make an edit {{$randomInt 1 100}} {{$randomInt 1 100}}",
 #"courseworkName": "CWK Uno"
 # "dueDate": "2020-08-05T23:00:00.000+00:00"
