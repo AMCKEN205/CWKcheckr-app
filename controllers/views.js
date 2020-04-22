@@ -65,7 +65,7 @@ viewsRouter.get("/reg-success", function(request, response) {
 });
 
 //viewsRouter.get('/', ensureLoggedIn('/login'), function (request, response) {
-viewsRouter.get('/', function (request, response) {
+viewsRouter.get('/',  ensureLoggedIn('/login'), function (request, response) {
     var session_id = request.session.passport.user;
     var loggedInStudent = {
         "studentNo" : session_id
