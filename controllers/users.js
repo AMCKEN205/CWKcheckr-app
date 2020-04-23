@@ -1,12 +1,12 @@
 //Logic for all calls to api/user will be handled here
 const usersRouter = require('express').Router()
-const bcrypt = require('bcrypt')
 const users = require('./testUsers')
 const db_accessor = require('../DB_interaction/db-accessor')
 dao = new db_accessor.DAO();
 
 // add new user
 usersRouter.post('/', function (req,res) {
+  //hashing of password with bcrypt happens at the database point. in CWKcheckr\DB_interaction\db-accessor.js
   const body = req.body
   if(body.registerPassword !== body.confirm) {
     var nomatch = encodeURIComponent(false);
@@ -41,5 +41,14 @@ usersRouter.post('/', function (req,res) {
     res.redirect('/register');
   });
 })
+usersRouter.get('/students', (request, response) => { 
+  dao.get_model_items(db_accessor.models.Student).then(
+    students => {
+      //console.log(student)
+      console.log('all students -----------------',students)
+     response.send(students)
+    }
+  )
+ });
 
 module.exports = usersRouter;

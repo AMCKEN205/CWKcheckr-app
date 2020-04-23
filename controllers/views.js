@@ -64,7 +64,8 @@ viewsRouter.get("/reg-success", function(request, response) {
     response.render("reg-success");
 });
 
-viewsRouter.get('/', ensureLoggedIn('/login'), function (request, response) {
+//viewsRouter.get('/', ensureLoggedIn('/login'), function (request, response) {
+viewsRouter.get('/',  ensureLoggedIn('/login'), function (request, response) {
     var session_id = request.session.passport.user;
     var loggedInStudent = {
         "studentNo" : session_id
@@ -222,7 +223,7 @@ viewsRouter.use(function (req, res, next) {
     res.type('text/plain');
     res.status(404);
     res.send(`404, Content not found.
-    \nAlso Hi from Ohe Alexander and James`);
+    \nAlso Hi from Ohe, Alexander and James`);
 });
 
 // 500 error handler (server/db error)

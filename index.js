@@ -7,6 +7,8 @@ const addCourseworkRouter = require('./controllers/add-coursework')
 const editCourseworkRouter = require('./controllers/edit-coursework')
 const removeCourseworkRouter = require('./controllers/remove-coursework')
 const viewsRouter = require('./controllers/views')
+const courseRouter = require('./controllers/course')
+const courseworkRouter = require('./controllers/coursework')
 const apiRouter = require('./controllers/api')
 const middleware = require('./utils/middleware')
 const passport = require('passport');
@@ -35,6 +37,9 @@ app.use(middleware.requestLogger)//log requests
 app.use(middleware.sessionLogger)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
+
+app.use('/api/cwk', courseworkRouter)
+app.use('/api/course', courseRouter)
 app.use('/api/ajax-add', ajaxAddRouter)
 app.use('/api/ajax-edit', ajaxEditRouter)
 app.use('/api/add-coursework', addCourseworkRouter)
