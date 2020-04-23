@@ -5,7 +5,7 @@ Content-Type: application/json
 {
   "studentNo": 1,
   "courseworkId": 5,
-  "milestones": "team meeting1"
+  "milestones": "team meeting3"
 }
 
 # POST http://localhost:3001/api/edit-coursework
