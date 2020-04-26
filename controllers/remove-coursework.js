@@ -9,29 +9,23 @@ removeCourseworkRouter.post('/', function(request, response) {
   //delete the coursework
   //if successful, redirect them to a page where it shows that coursework deleted or home or just say it is deleted
   const body = request.body
-  const courseworkId= body.courseworkId
+  const courseworkId= body.courseworkSelect
   //TODO change all body.studentNo to the appopriate thing
   const studentNo = body.studentNo || request.session.passport.user
 
 
   //check request has courseworkId and studentNo or sessionId
   if (!courseworkId ||!studentNo) {
-  console.log(("----------------------courseworkId " + body.courseworkId + "studentNo " +studentNo))
+  console.log(("----------------------courseworkId " + body.courseworkSelect + "studentNo " +studentNo))
   response.status(405)
-  response.send("courseworkId or sessionId missing.")
+  response.redirect('/remove-coursework?error='+true+'')
   return
   }
 
   dao.delete_coursework_from_student(studentNo,courseworkId)
 
   response.status(202)
-  response.send(
-    `<html>
-    <body>
-      <h1>coursework deleted.</h1> 
-    </body>
-  </html>`)
-  //delete_coursework_from_student(studentNo, courseworkId)
+  response.redirect("/remove-coursework-success")
 });
 
 

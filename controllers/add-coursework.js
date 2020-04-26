@@ -7,27 +7,39 @@ dao = new db_accessor.DAO();
 
 addCourseworkRouter.post('/', function(request, response) {// add coursework and add it to a course and attach it to a student
   const body = request.body
-  //TODO change all body.studentNo to the appopriate thing
-  const studentNo = body.studentNo || request.session.passport.user
+
+  const studentNo = request.session.passport.user
 
   //initialise the parameters necessary to create a coursework
-  const courseId= body.courseId,  courseworkId= body.courseworkId
+  const courseId= body.courseSelect,  courseworkId= body.courseworkSelect
 
   //check coursework has name, course and courseworkDescription //add the coursework // if successful, redirect them to a page where it shows that coursework added or home
-  if (!body.courseworkId ||!courseId ||!studentNo) {
+  if (!courseworkId ||!courseId ||!studentNo) {
     console.log(("----------------------studentNo " + studentNo + "courseworkId " +courseworkId + "courseId " +courseId))
     response.status(405)
-    response.send("studentNo (sessionId), courseworkId and courseId are required.")
+    response.redirect('/add-coursework?error='+true+'')
     return
   }
-
-  //add that the coursework to the student
-  //add_coursework_to_student(studentNo, courseId, courseworkId) 
-  console.log(`add_coursework_to_student(${studentNo}, ${courseId}, ${courseworkId})`)
-  dao.add_coursework_to_student(studentNo, courseId, courseworkId)
- 
-  response.status(201)
-  response.redirect('/')
+  dao.get_model_items(db_accessor.models.Student, {"studentNo" : studentNo}).then(students => {
+    for(var i = 0; i < students[0].courseworks.length; i++) {
+      if(courseworkId == students[0].courseworks[i].courseworkId && 
+        courseId == students[0].courseworks[i].courseId) {
+          console.log("worked");
+          throw "Duplicate coursework"
+      }
+    }
+    //add that the coursework to the student
+    //add_coursework_to_student(studentNo, courseId, courseworkId) 
+    console.log(`add_coursework_to_student(${studentNo}, ${courseId}, ${courseworkId})`)
+    dao.add_coursework_to_student(studentNo, courseId, courseworkId)
+    response.status(201)
+    response.redirect('/add-coursework-success')
+  }).catch(error => {
+    console.log(error);
+    response.status(405)
+    response.redirect('/add-coursework?dupe='+true+'')
+    return;
+  })
     
 });
 

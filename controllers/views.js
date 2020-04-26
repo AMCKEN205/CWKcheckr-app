@@ -9,14 +9,14 @@ viewsRouter.get("/login", function (request, response) {
     //console.log(request.session.passport.user);
     if(request.query.fail === 'true') {
         response.render("login", {
-            "Title" : "Login Screen",
+            "Title" : "Login Page",
             "page" : "CWKCheckr Login",
             "error" : "Incorrect Username/Password!"
         });
     }
     else {
         response.render("login", {
-            "Title" : "Login Screen",
+            "Title" : "Login Page",
             "page" : "CWKCheckr Login"
         });
     }
@@ -30,7 +30,7 @@ viewsRouter.get("/logout", function(request, response) {
 viewsRouter.get("/register", function (request, response) {
     if(request.query.passmatch === 'false') {
         response.render("register", {
-            "Title" : "Sign Up Screen",
+            "Title" : "Sign Up Page",
             "page" : "CWKCheckr Register",
             "pass-match" : "Passwords do not match!"
         });
@@ -38,7 +38,7 @@ viewsRouter.get("/register", function (request, response) {
     }
     else if(request.query.userexists === 'true') {
         response.render("register", {
-            "Title" : "Sign Up Screen",
+            "Title" : "Sign Up Page",
             "page" : "CWKCheckr Register",
             "user-exists" : "This username is already taken! Please try another."
         });
@@ -46,7 +46,7 @@ viewsRouter.get("/register", function (request, response) {
     }
     else if(request.query.dberror === 'true') {
         response.render("register", {
-            "Title" : "Sign Up Screen",
+            "Title" : "Sign Up Page",
             "page" : "CWKCheckr Register",
             "db-error" : "Registration failed...contact James, Alex or Ohe!"
         });
@@ -54,14 +54,17 @@ viewsRouter.get("/register", function (request, response) {
     }
     else{
         response.render("register", {
-            "Title" : "Sign Up Screen",
+            "Title" : "Sign Up Page",
             "page" : "CWKCheckr Register"
         });
     }
 });
 
 viewsRouter.get("/reg-success", function(request, response) {
-    response.render("reg-success");
+    response.render("reg-success", {
+        "Title" : "Successfully registered",
+        "page" : "Login page"
+    });
 });
 
 //viewsRouter.get('/', ensureLoggedIn('/login'), function (request, response) {
@@ -87,6 +90,7 @@ viewsRouter.get('/',  ensureLoggedIn('/login'), function (request, response) {
             }
         }
         response.render("home", {
+            "Title" : "Home page",
             "page" : "CWKCheckr Home Page",
             "Student" : student_name,
             "Courses" : student_courses,
@@ -96,6 +100,7 @@ viewsRouter.get('/',  ensureLoggedIn('/login'), function (request, response) {
         console.log(err);
         console.log("Could not retrieve student, see error above.");
         response.render("home", {
+            "Title" : "Home page",
             "page" : "CWKCheckr Home Page",
             "Student" : [],
             "Courses" : [],
@@ -124,6 +129,7 @@ viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request,
             }
         }
         response.render("view-coursework", {
+            "Title" : "View Coursework",
             "page" : "CWKCheckr View Coursework",
             "Complete Coursework" : complete_courseworks,
             "Incomplete Coursework" : incomplete_courseworks
@@ -132,6 +138,7 @@ viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request,
         console.log(error);
         console.log("could not retrieve student, see error above");
         response.render("view-coursework", {
+            "Title" : "View Coursework",
             "page" : "CWKCheckr View Coursework",
             "Complete Coursework" : [],
             "Incomplete Coursework" : []
@@ -151,18 +158,45 @@ viewsRouter.get("/add-coursework", ensureLoggedIn('/login'), function(request, r
             console.log(students[i].courses);
             courses = students[i].courses;
         }
-            
-        response.render("add-coursework", {
-            "page" : "Add Coursework",
-            "courses" : courses
-        });
+        if(request.query.error === 'true') {
+            response.render("add-coursework", {
+                "Title" : "Add Coursework",
+                "page" : "Add Coursework",
+                "courses" : courses,
+                "error" : "Failed to add coursework to student. Contact the devs for help!"
+            });
+            return;
+        }
+        else if(request.query.dupe === 'true'){
+            response.render("add-coursework", {
+                "Title" : "Add Coursework",
+                "page" : "Add Coursework",
+                "courses" : courses,
+                "error" : "Can't add the same coursework twice."
+            });
+        } else {
+            response.render("add-coursework", {
+                "Title" : "Add Coursework",
+                "page" : "Add Coursework",
+                "courses" : courses
+            });
+        }
     }).catch(error => {
         console.log(error);
         console.log("could not retrieve student, see error above");
         response.render("add-coursework", {
+            "Title" : "Add Coursework",
             "page" : "Add Coursework",
-            "courses" : []
+            "courses" : [],
+            "error" : "Could not access server. Contact the devs for help!"
         }); 
+    });
+});
+
+viewsRouter.get("/add-coursework-success", function(request, response) {
+    response.render("add-coursework-success", {
+        "Title" : "Successfully added coursework",
+        "page" : "homepage"
     });
 });
 
@@ -177,8 +211,17 @@ viewsRouter.get("/edit-coursework", ensureLoggedIn('/login'), function(request, 
             console.log(students[i].courseworks);
             courseworks = students[i].courseworks;
         }
-            
+        if(request.query.error === 'true') {
+            response.render("edit-coursework", {
+                "Title" : "Edit Coursework",
+                "page" : "Edit Coursework",
+                "error" : "Failed to edit coursework. Contact the devs for help!",
+                "courseworks" : courseworks
+            });
+            return;
+        }  
         response.render("edit-coursework", {
+            "Title" : "Edit Coursework",
             "page" : "Edit Coursework",
             "courseworks" : courseworks
         });
@@ -186,11 +229,20 @@ viewsRouter.get("/edit-coursework", ensureLoggedIn('/login'), function(request, 
         console.log(error);
         console.log("could not retrieve student, see error above");
         response.render("edit-coursework", {
+            "Title" : "Edit Coursework",
             "page" : "Edit Coursework",
+            "error" : "Could not access server. Contact the devs for help!",
             "courseworks" : []
         }); 
     });
 });
+
+viewsRouter.get("/edit-coursework-success", function(request, response) {
+    response.render("edit-coursework-success", {
+        "Title" : "Successfully Edited Coursework",
+        "page" : "homepage"
+    });
+})
 
 viewsRouter.get("/remove-coursework", ensureLoggedIn('/login'), function(request, response) {
     var session_id = request.session.passport.user;
@@ -203,8 +255,17 @@ viewsRouter.get("/remove-coursework", ensureLoggedIn('/login'), function(request
             console.log(students[i].courseworks);
             courseworks = students[i].courseworks;
         }
-            
+        if(request.query.error === 'true') {
+            response.render("remove-coursework", {
+                "Title" : "Remove Coursework",
+                "page" : "Remove Coursework",
+                "error" : "Failed to remove coursework from student. Contact the devs for help!",
+                "courseworks" : courseworks
+            });
+            return;
+        }  
         response.render("remove-coursework", {
+            "Title" : "Remove Coursework",
             "page" : "Remove Coursework",
             "courseworks" : courseworks
         });
@@ -212,11 +273,20 @@ viewsRouter.get("/remove-coursework", ensureLoggedIn('/login'), function(request
         console.log(error);
         console.log("could not retrieve student, see error above");
         response.render("remove-coursework", {
+            "Title" : "Remove Coursework",
             "page" : "Remove Coursework",
+            "error" : "Could not access server. Contact the devs for help!",
             "courseworks" : []
         }); 
     });;
 });
+
+viewsRouter.get("/remove-coursework-success", function(request, response) {
+    response.render("remove-coursework-success", {
+        "location" : "/",
+        "page" : "homepage"
+    });
+})
 
 // 404 catch-all handler (bad request)
 viewsRouter.use(function (req, res, next) {

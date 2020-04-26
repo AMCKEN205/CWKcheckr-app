@@ -7,7 +7,8 @@
         <div class="container">
            <div class="jumbotron" style="vertical-align:middle; align-items: center; margin-top:50px;
             width:100%; background-color: #707070;">
-                <form action= "/api/remove-coursework" method = "post">
+            <h3 style="font-size:24; color:red;">{{error}}</h3>
+                <form action= "/api/remove-coursework" method = "post" onsubmit="return confirm('Are you sure you want to remove coursework '+$('#courseworkSelect option:selected').text()+'?');">
                     <h2 style="font-size:32; color:white; margin-bottom:30px;">Coursework</h2>
                     <div class="form-group dropdown">
                         <select class="input-large form-control" name="courseworkSelect" id="courseworkSelect">
