@@ -6,14 +6,18 @@ dao = new db_accessor.DAO();
 //course ID.
 
 ajaxAddRouter.get('/', function(request, response) {
+  const studentNo = request.body.studentNo || request.session.passport.user
+    console.log(studentNo)
     var course = request.query.course;
     var options = "";
      var get_courseworks_by_course_id = 
      {
          "courseId" : course
      }
-    dao.get_model_items(db_accessor.models.Coursework, get_courseworks_by_course_id).then(courseworks => {
-        for(var i = 0; i < courseworks.length; i++) {
+    dao.get_model_items(db_accessor.models.Student, {"studentNo": studentNo}).then(student => {
+    //dao.get_model_items(db_accessor.models.Coursework, get_courseworks_by_course_id).then(courseworks => {
+        //for(var i = 0; i < courseworks.length; i++) {
+            for(var i = 0; i < student[0].courseworks.length; i++) {
             options += '<option value="'+courseworks[i].courseworkId+'">'+courseworks[i].courseworkName+'</option>';
         }
     }).catch(error => {

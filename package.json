@@ -5,7 +5,8 @@
   "main": "schemas.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "servedev": "nodemon index.js"
+    "servedev": "nodemon index.js",
+    "dbfxn": "node DB_interaction/db-accessor-test-script.js "
   },
   "repository": {
     "type": "git",

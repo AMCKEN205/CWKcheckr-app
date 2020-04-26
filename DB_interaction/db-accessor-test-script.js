@@ -74,7 +74,7 @@ dao.get_model_items(db_accessor.models.Course).then(courses => {
 
 
 // should pass //add_course_to_student(studentNo, courseId)
-//dao.add_course_to_student(2, 4)
+//dao.add_course_to_student(21, 1)
 
 
 //add_coursework_to_student(studentNo, courseId, courseworkId)
@@ -84,7 +84,7 @@ dao.get_model_items(db_accessor.models.Course).then(courses => {
 //dao.add_coursework_to_student(1, 1, 2)
 
 // should pass //add_coursework_to_student(studentNo, courseId, courseworkId)
-//dao.add_coursework_to_student(2,2,2)
+//dao.add_coursework_to_student(21,1,1)
 
 
 //edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate)
