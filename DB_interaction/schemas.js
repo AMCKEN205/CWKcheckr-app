@@ -8,7 +8,19 @@ var student_schema = new mongoose.Schema({
     username: String,
     passwordHash: String,
     courseworks: [{
-                    courseworkId: Number, courseworkName: String, courseworkDescription: String, courseId: Number, courseName: String, dueDate: Date, completionDate: Date, milestones : Array
+                    courseworkId: Number, 
+                    courseworkName: String, 
+                    courseworkDescription: String, 
+                    courseId: Number, 
+                    courseName: String, 
+                    dueDate: Date, 
+                    completionDate: Date, 
+                    milestones : [
+                        {
+                            milestoneTitle : String,
+                            complete : Boolean
+                        }
+                    ]
                 }],
     courses: [{
                 courseId: Number, courseName: String
