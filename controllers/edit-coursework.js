@@ -11,13 +11,13 @@ editCourseworkRouter.post('/', function (request, response) {
   //update the coursework
   //if successful, redirect them to a page where it shows that coursework updated or home
   const body = request.body
-  const courseworkId = body.courseworkId
+  const courseworkId = body.courseworkSelect
   //TODO change all body.studentNo to the appopriate thing
   const studentNo = body.studentNo || request.session.passport.user
 
 
   if (!courseworkId || !studentNo) {//check request has courseworkId and studentNo (or sessionId)
-    console.log(("----------------------courseworkId " + body.courseworkId + "studentNo " + studentNo))
+    console.log(("----------------------courseworkId " + courseworkId + "studentNo " + studentNo))
     response.status(405)
     response.send("courseworkId or sessionId missing.")
     return
@@ -34,9 +34,9 @@ editCourseworkRouter.post('/', function (request, response) {
 
       let update = {
         //if the request body has the new value use it, if not then use the original
-        courseworkName: body.courseworkName ? body.courseworkName : cwk.courseworkName,
-        courseworkDescription: body.courseworkDescription ? body.courseworkDescription : cwk.courseworkDescription,
-        dueDate: body.dueDate ? body.dueDate : cwk.dueDate,
+        courseworkName: cwk.courseworkName,
+        courseworkDescription: cwk.courseworkDescription,
+        dueDate: cwk.dueDate,
         //we add new milestones to existing milestones if the request has them or keep the originals
         milestones: body.milestones ? cwk.milestones.concat(body.milestones) : cwk.milestones,
         completionDate: body.completionDate ? body.completionDate : cwk.completionDate,
@@ -44,12 +44,13 @@ editCourseworkRouter.post('/', function (request, response) {
       }
       //console.log('------------------------------the new coursework', update)
       //edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate)
-      dao.edit_coursework_in_student(studentNo, courseworkId, update.courseworkName, update.completionDate, update.milestones, update.dueDate)
+      //dao.edit_coursework_in_student(studentNo, courseworkId, update.courseworkName, update.completionDate, update.milestones, update.dueDate)
     })
 
   //TODO: Redirect to page that shows the updated cwk or all cwks
   response.status(202)
-  response.send(`successfully update coursework ${courseworkId} within student ${studentNo} courseworks collection.`)
+  response.redirect("/")
+  //response.send(`successfully update coursework ${courseworkId} within student ${studentNo} courseworks collection.`)
 });
 
 module.exports = editCourseworkRouter;
