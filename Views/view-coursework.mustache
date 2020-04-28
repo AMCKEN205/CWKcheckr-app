@@ -28,17 +28,17 @@
                                     <ul>
                                         {{#milestones}}
                                             <li>
-                                                {{Name}}
-                                                {{#Check}}
+                                                {{milestoneTitle}}
+                                                {{#complete}}
                                                     <div>
                                                         <img src="../Resources/check-square.svg" id="checkImg"/>
                                                     <div>
-                                                {{/Check}}
-                                                {{^Check}}
+                                                {{/complete}}
+                                                {{^complete}}
                                                     <div>
                                                         <img src="../Resources/square.svg" id="checkImg"/>
                                                     <div>
-                                                {{/Check}}
+                                                {{/complete}}
                                             </li>
                                         {{/milestones}}
                                     </ul>
@@ -79,17 +79,17 @@
                                     <ul>
                                         {{#milestones}}
                                             <li>
-                                                {{Name}}
-                                                {{#Check}}
+                                                {{milestoneTitle}}
+                                                {{#complete}}
                                                     <div>
                                                         <img src="check-square.svg" id="checkImg"/>
                                                     <div>
-                                                {{/Check}}
-                                                {{^Check}}
+                                                {{/complete}}
+                                                {{^complete}}
                                                     <div>
                                                         <img src="square.svg" id="checkImg"/>
                                                     <div>
-                                                {{/Check}}
+                                                {{/complete}}
                                             </li>
                                         {{/milestones}}
                                     </ul>

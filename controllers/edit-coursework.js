@@ -53,15 +53,46 @@ editCourseworkRouter.post('/', function (request, response) {
       console.log("courseworkName " + courseworkName + " courseworkDescription " + courseworkDescription + 
       " dueDate " +dueDate+" milestones "+milestones+" completionDate "+completionDate)
 
+    //Since the number of milestones will be unknown, this value has to be retrieved and the values of each milestone must be found
+    var milestonesList = [];
+    var bodyLength = Object.keys(body).length; //number of keys within the body object
+    console.log(bodyLength);
+    for(var i = 0; i < bodyLength; i++) {
+      var milestoneNo = "milestone"+i; //current milestone number
+      var milestoneCheck = "complete"+i; //current milestone complete number
+
+      //executes if the current milestone number is a key within the body object
+      if(milestoneNo in body && milestoneNo in body) {
+        var value = body[milestoneNo]; //milestone title value for current body key
+        var completeVal = body[milestoneCheck]; //milestone complete value for current body key
+        var milestoneObj = {};
+
+        //executes if the milestone is marked as completed
+        if(!isUndefined(completeVal)) {
+          milestoneObj = {
+            milestoneTitle : value,
+            complete : true
+          }
+        } 
+        
+        //executes if the milestone is marked as incomplete
+        else if(isUndefined(completeVal)){  
+          milestoneObj = {
+            milestoneTitle : value
+          }
+        }
+        milestonesList.push(milestoneObj); //pushes milestone object to milestone list
+      }
+    }
+
       let update = {
         //if the request body has the new value use it, if not then use the original
         courseworkName : !isUndefined(body.courseworkName) ? body.courseworkName : courseworkName,
         courseworkDescription: !isUndefined(body.courseworkDescription) ? body.courseworkDescription : courseworkDescription,
         dueDate: !isUndefined(body.dueDate) ? body.dueDate : dueDate,
-        //we add new milestones to existing milestones if the request has them or keep the originals
-        milestones: !isUndefined(body.milestones) ? cwk.milestones.concat(body.milestones) : milestones,
+        milestones: !isUndefined(milestonesList) ? milestonesList : milestones,
         completionDate: !isUndefined(body.completionDate) ? body.completionDate : completionDate,
-        //only completionDate, milestones can be changed 
+        //title, description, completionDate and milestones can be changed. Due date cannot be changed.
       }
       console.log('------------------------------the new coursework', update)
       //edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate)

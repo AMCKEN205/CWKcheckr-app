@@ -242,7 +242,7 @@ class DAO {
         });
     }
 
-    add_coursework_to_student(studentNo, courseId, courseworkId) {
+    add_coursework_to_student(studentNo, courseId, courseworkId, milestonesList) {
         // Add a student to a course
 
         // Indicate we've started running the add add course to student process. 
@@ -302,6 +302,8 @@ class DAO {
                             // Indicates the coursework has yet to be completed.
                             var completion_date_inital_set = null
                             var milestones_inital_set = []
+                            this.isUndefined(milestonesList) ? milestones_inital_set = [] : milestones_inital_set=milestonesList;
+                            console.log(milestones_inital_set);
                             var courseName = "";
                             for (var i = 0; i < students[0].courses.length; i++) {
                                 if(courseId == students[0].courses[i].courseId) {
@@ -598,6 +600,11 @@ class DAO {
             console.log("Application database disconnect failure! See error details above.");
         });
     }
+
+    isUndefined (value) {
+        var undefined = void(0);
+        return value === undefined;
+      }
      
 }
 
