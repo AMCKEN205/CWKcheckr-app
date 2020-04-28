@@ -5,12 +5,10 @@
             {{>page-header}}
         </div>
         <div class="container">
-        <a class="nav-link" style="color:red; font-size:24;" href="/view-coursework">Back</a>
+        <a class="nav-link" style="color:red; font-size:24;" href="/">Back</a>
             <div class="jumbotron"style="background-color: :#7D7D7D;">
-                <h2 style="background-color:#2E2E2E; color:white;" font-family:'Red Hat Display', sans serif;">Selected Coursework</h2>
                 {{#Coursework}}
-                <h3 style="background-color:#2E2E2E; color:white;" font-family:'Red Hat Display', sans serif;">Shareable Link:</h3>
-                <input type="text" readonly value={{ShareableLink}}></input>
+                <h2 style="background-color:#2E2E2E; color:white;" font-family:'Red Hat Display', sans serif;">{{OriginStudent}}'s {{courseworkName}} coursework</h2>
                     <table class="table">
                         <thead>
                             <tr>

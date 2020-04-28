@@ -116,26 +116,48 @@ viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request,
         "studentNo" : session_id
     };
     dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
-        if(request.query.selected != undefined) {
-            courseworks = [];
-            for(var i = 0; i < students.length; i++) {
-                for(var j = 0; j < students[i].courseworks.length; j++) {
-                    if(request.query.selected == students[i].courseworks[j].courseworkId){
-                        courseworks.push(students[i].courseworks[j]);
+
+        if(request.query.shareStudent != undefined) {
+            for (var i = 0; i < students.length; i++){
+                if(request.query.shareStudent == students[i].studentNo){
+                    for(var j = 0; j < students[i].courseworks.length; j++) {
+                        if(request.query.cwkId == students[i].courseworks[j].courseworkId){
+                            coursework = students[i].courseworks[j];
+                            studentName = students[i].username
+                            break;
+                        }
                     }
                 }
             }
+            base_url = request.get("host")
+            response.render("view-shared-coursework", {
+                "Title" : "Shared Coursework",
+                "page" : "CWKCheckr Shared Coursework",
+                "Coursework" : coursework,
+                "OriginStudent" : studentName
+            });
+            return;
+        }
+        else if(request.query.selected != undefined) {
+            coursework = null;
+            for(var i = 0; i < students.length; i++) {
+                for(var j = 0; j < students[i].courseworks.length; j++) {
+                    if(request.query.selected == students[i].courseworks[j].courseworkId){
+                        coursework  = students[i].courseworks[j];
+                        // Exit loop on required coursework find.
+                        break;
+                    }
+                }
+            }
+            base_url = request.get("host")
             response.render("view-selected-coursework", {
                 "Title" : "Selected Coursework",
                 "page" : "CWKCheckr Selected Coursework",
-                "Coursework" : courseworks
+                "Coursework" : coursework,
+                "ShareableLink" : `${base_url}/view-coursework?shareStudent=${loggedInStudent.studentNo}&cwkId=${coursework.courseworkId}`
             });
             return;
-        } else if(request.query.share != undefined) {
-            //TODO implement shareable link functionality.
-            console.log("This functionality is Alex's problem! ;)");
-            return;
-        }  else {
+        } else {
             complete_courseworks = [];
             incomplete_courseworks =[];
             for (var i = 0; i < students.length; i++) {
