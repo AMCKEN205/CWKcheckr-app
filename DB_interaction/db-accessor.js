@@ -306,7 +306,8 @@ class DAO {
                             console.log(milestones_inital_set);
                             var courseName = "";
                             for (var i = 0; i < students[0].courses.length; i++) {
-                                if(courseId === students[0].courses[i].courseId) {
+                                if(courseId == students[0].courses[i].courseId) {
+                                    console.log("poo");
                                     courseName = students[0].courses[i].courseName;
                                     break;
                                 }
