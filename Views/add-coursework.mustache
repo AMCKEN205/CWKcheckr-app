@@ -10,8 +10,11 @@
         //Generates a new milestone div tag
 
         function getMilestone(value) {
-            return '<label for"milestone'+counter+'">Milestone '+counter+'</label>' +'<input style="margin-bottom:20px" class="form-control" id="milestone'+counter+'" name="milestone'+counter+'" type="text" value="'+value+'"/>' +
-                    '<button style="margin-bottom:30px" class="btn btn-primary" type="button" onclick="removeMilestone(this)">Remove Milestone '+counter+'</button>'
+            return '<label for"milestone'+counter+'">Milestone '+counter+'</label>'+
+                    '<input style="margin-bottom:20px" class="form-control" id="milestone'+counter+'" name="milestone'+counter+'" type="text" value="'+value+'"/>' +
+                    '<input type="checkbox" id="complete'+counter+'" name="complete'+counter+'" value="Complete">Complete</input>'+
+                    '<br>'+
+                    '<button style="margin-bottom:30px" class="btn btn-danger" type="button" onclick="removeMilestone(this)">Remove Milestone '+counter+'</button>'
         }
         
         //called when the 'add milestone' button is clicked on page

@@ -24,6 +24,7 @@ viewsRouter.get("/login", function (request, response) {
 
 viewsRouter.get("/logout", function(request, response) {
     request.logout();
+    request.session.destroy();
     response.redirect("/");
 })
 

@@ -9,17 +9,33 @@
 
         //Generates a new milestone div tag
 
-        function getMilestone(value) {
-            return '<label for"milestone'+counter+'">Milestone '+counter+'</label>' +'<input style="margin-bottom:20px" class="form-control" id="milestone'+counter+'" name="milestone'+counter+'" type="text" value="'+value+'"/>' +
-                    '<button style="margin-bottom:30px" class="btn btn-primary" type="button" onclick="removeMilestone(this)">Remove Milestone '+counter+'</button>'
+        function getMilestone(value, complete) {
+            var undefined = void(0);
+            if(complete === undefined) {
+                return '<label for"milestone'+counter+'">Milestone '+counter+'</label>'+
+                    '<input style="margin-bottom:20px" class="form-control" id="milestone'+counter+'" name="milestone'+counter+'" type="text" value="'+value+'"/>' +
+                    '<input type="checkbox" id="complete'+counter+'" name="complete'+counter+'" value="Complete">Complete</input>'+
+                    '<br>'+
+                    '<button style="margin-bottom:30px" class="btn btn-danger" type="button" onclick="removeMilestone(this)">Remove Milestone '+counter+'</button>'
+            }
+            else { 
+                return '<label for"milestone'+counter+'">Milestone '+counter+'</label>'+
+                    '<input style="margin-bottom:20px" class="form-control" id="milestone'+counter+'" name="milestone'+counter+'" type="text" value="'+value+'"/>' +
+                    '<input type="checkbox" id="complete'+counter+'" name="complete'+counter+'" value="Complete" checked>Complete</input>'+
+                    '<br>'+
+                    '<button style="margin-bottom:30px" class="btn btn-danger" type="button" onclick="removeMilestone(this)">Remove Milestone '+counter+'</button>'
+            }
+            
         }
         
         //called when the 'add milestone' button is clicked on page
 
-        function addMilestone() {
+        function addMilestone(value, complete) {
             counter++;
+            var undefined = void(0);
+            value === undefined ? value = "" : value = value;
             var div = document.createElement('DIV');
-            div.innerHTML = getMilestone("");
+            div.innerHTML = getMilestone(value, complete);
             document.getElementById("milestoneDiv").appendChild(div);
         }
 
@@ -27,7 +43,6 @@
 
         function removeMilestone(div) {
             document.getElementById("milestoneDiv").removeChild(div.parentNode);
-            counter--;
         }
 
         //Ajax function which sends the current value of the course select combobox option to the ajax controller.
@@ -42,21 +57,24 @@
                         data: {coursework: $('#courseworkSelect').val()},
                 success: function(result){
 
+                    counter = 0;
+
                     $('#nameDiv').empty();
                     $('#descDiv').empty();
                     $('#milestoneDiv').empty();
-                    console.log(result);
+                    console.log(result); 
 
                     $('#nameDiv').html(result[0]);
                     $('#descDiv').html(result[1]);
                     for(var i = 0; i < result[2].length; i++) {
                         console.log(result[2][i]);
+                        addMilestone(result[2][i].milestoneTitle, result[2][i].complete);
                     }
                     $('#dueDate').val(result[3]);
                     $('#completionDate').val(result[4]);
 
                     //This updates the counter value which checks how many milestones their are.
-                    counter = $('#milestoneDiv').length;
+                    counter = result[2][i].length;
                 }});
 
         $('#courseworkSelect').change(function() {
@@ -73,6 +91,8 @@
                         //NOTE: Some functionality within this function may need to be modified in order to obtain the data from 
                         //      the 'result' array.
 
+                        counter = 0;
+
                         $('#nameDiv').empty();
                         $('#descDiv').empty();
                         $('#milestoneDiv').empty();
@@ -82,12 +102,13 @@
                         $('#descDiv').html(result[1]);
                         for(var i = 0; i < result[2].length; i++) {
                             console.log(result[2][i]);
+                            addMilestone(result[2][i].milestoneTitle, result[2][i].complete);
                         }
                         $('#dueDate').val(result[3]);
                         $('#completionDate').val(result[4]);
 
                         //This updates the counter value which checks how many milestones their are.
-                        counter = $('#milestoneDiv').length;
+                        counter = result[2][i].length;
                     }});
             });
         });
@@ -132,7 +153,7 @@
                     </div>
                     <h2 style="font-size:32; color:white; margin-bottom:30px;">Due Date</h2>
                     <div id="dueDateDiv" class="form-group">
-                        <input type="text" class="form-control" id="dueDate" name="dueDate"/>
+                        <input type="text" class="form-control" id="dueDate" name="dueDate" disabled/>
                     </div>
                     <h2 style="font-size:32; color:white; margin-bottom:30px;">Completion Date</h2>
                     <div id="compDateDiv" class="form-group">
