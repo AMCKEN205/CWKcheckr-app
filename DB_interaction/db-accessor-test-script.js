@@ -74,7 +74,7 @@ dao.get_model_items(db_accessor.models.Course).then(courses => {
 
 
 // should pass //add_course_to_student(studentNo, courseId)
-//dao.add_course_to_student(2, 4)
+// dao.add_course_to_student(22, 2)
 
 
 //add_coursework_to_student(studentNo, courseId, courseworkId)
@@ -84,11 +84,14 @@ dao.get_model_items(db_accessor.models.Course).then(courses => {
 //dao.add_coursework_to_student(1, 1, 2)
 
 // should pass //add_coursework_to_student(studentNo, courseId, courseworkId)
-//dao.add_coursework_to_student(2,2,2)
+dao.add_coursework_to_student(22,2,2)
 
 
 //edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate)
-//dao.edit_coursework_in_student(1, 1, "Test coursework Uno", new Date(2021,10,30), ["started!","done!","quickscoped"], new Date(2021,11,30))
+// dao.edit_coursework_in_student(1, 1, "Test coursework Uno", new Date(2021,10,30), [{milestoneTitle: "started!", complete: false}], new Date(2021,11,30))
 
 //delete_coursework_from_student(studentNo, courseworkId)
 //dao.delete_coursework_from_student(1, 1)
+
+// Remove milestones
+// dao.edit_coursework_in_student(1, 1, "Test coursework Uno", new Date(2021,10,30), null, new Date(2021,11,30))

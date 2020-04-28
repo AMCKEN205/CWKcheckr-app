@@ -11,7 +11,7 @@ addCourseworkRouter.post('/', function(request, response) {// add coursework and
   const studentNo = body.studentNo || request.session.passport.user
 
   //initialise the parameters necessary to create a coursework
-  const courseId= body.courseId,  courseworkId= body.courseworkId
+  const courseId= body.courseSelect,  courseworkId= body.courseworkSelect
 
   //check coursework has name, course and courseworkDescription //add the coursework // if successful, redirect them to a page where it shows that coursework added or home
   if (!body.courseworkId ||!courseId ||!studentNo) {
