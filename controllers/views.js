@@ -157,15 +157,6 @@ viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request,
             });
             return;
         }
-<<<<<<< HEAD
-        response.render("view-coursework", {
-            "Title" : "View Coursework",
-            "page" : "CWKCheckr View Coursework",
-            "Complete Coursework" : complete_courseworks,
-            "Incomplete Coursework" : incomplete_courseworks
-        });
-=======
->>>>>>> 0d0bbf14194e0b9e47f62361bd429bcdbe170790
     }).catch(error => {
         console.log(error);
         console.log("could not retrieve student, see error above");
