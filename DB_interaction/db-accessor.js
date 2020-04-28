@@ -242,7 +242,7 @@ class DAO {
         });
     }
 
-    add_coursework_to_student(studentNo, courseId, courseworkId) {
+    add_coursework_to_student(studentNo, courseId, courseworkId, milestonesList) {
         // Add a student to a course
 
         // Indicate we've started running the add add course to student process. 
@@ -302,6 +302,8 @@ class DAO {
                             // Indicates the coursework has yet to be completed.
                             var completion_date_inital_set = null
                             var milestones_inital_set = []
+                            this.isUndefined(milestonesList) ? milestones_inital_set = [] : milestones_inital_set=milestonesList;
+                            console.log(milestones_inital_set);
                             var courseName = "";
                             for (var i = 0; i < students[0].courses.length; i++) {
                                 if(courseId === students[0].courses[i].courseId) {
@@ -323,7 +325,12 @@ class DAO {
                                     } 
                                 }
                             };
-                            
+                            for(var j = 0; j < students[0].courseworks.length; j++) {
+                                if(courseworkId == students[0].courseworks[j].courseworkId && 
+                                    courseId == students[0].courseworks[j].courseId) {
+                                        throw "Attempted to add duplicate coursework!"
+                                }
+                            }
                             models.Student.collection.findOneAndUpdate(student_no_get_doc, student_courses_update_doc);
                             console.log(`coursework ${courseworkId} saved to student ${studentNo} courseworks collection.`);
                         }
@@ -350,6 +357,7 @@ class DAO {
         {
             console.log(err);
             console.log(`coursework ${courseworkId} failed to link to student ${studentNo} within students collection, see error above.`);
+            return err
         })
         .then(() => 
         {
@@ -362,7 +370,7 @@ class DAO {
         });
     }
 
-    edit_coursework_in_student(studentNo, courseworkId, courseworkName, completionDate, milestones, dueDate){
+    edit_coursework_in_student(studentNo, courseworkId, courseworkName, courseworkDescription, completionDate, milestones, dueDate){
         // Edit a coursework within a student document
 
         // Indicate we've started running the edit coursework in student process. 
@@ -395,7 +403,8 @@ class DAO {
                             var courseworks = student.courseworks
                             for ( var i=0; i < courseworks.length; i++ ) {
                                 if (courseworks[i].courseworkId == courseworkId) {
-
+                                    courseworks[i].courseworkName = courseworkName
+                                    courseworks[i].courseworkDescription = courseworkDescription
                                     courseworks[i].completionDate = completionDate
                                     courseworks[i].milestones = milestones
                                     courseworks[i].dueDate = dueDate
@@ -590,6 +599,11 @@ class DAO {
             console.log("Application database disconnect failure! See error details above.");
         });
     }
+
+    isUndefined (value) {
+        var undefined = void(0);
+        return value === undefined;
+      }
      
 }
 

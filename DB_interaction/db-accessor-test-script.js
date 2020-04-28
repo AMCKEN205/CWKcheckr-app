@@ -95,3 +95,7 @@ dao.add_coursework_to_student(22,2,2)
 
 // Remove milestones
 // dao.edit_coursework_in_student(1, 1, "Test coursework Uno", new Date(2021,10,30), null, new Date(2021,11,30))
+dao.delete_coursework_from_student(4, 1)
+dao.get_model_items(db_accessor.models.Student,{"courses":{$elemMatch: {"courseId": 1}}} ).then(students => {
+    console.log(students)
+});
