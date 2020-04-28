@@ -115,9 +115,9 @@ viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request,
     var loggedInStudent = {
         "studentNo" : session_id
     };
-    dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
 
-        if(request.query.shareStudent != undefined) {
+    if(request.query.shareStudent != undefined) {
+        dao.get_model_items(db_accessor.models.Student).then(students => {
             for (var i = 0; i < students.length; i++){
                 if(request.query.shareStudent == students[i].studentNo){
                     for(var j = 0; j < students[i].courseworks.length; j++) {
@@ -129,6 +129,7 @@ viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request,
                     }
                 }
             }
+
             base_url = request.get("host")
             response.render("view-shared-coursework", {
                 "Title" : "Shared Coursework",
@@ -136,60 +137,63 @@ viewsRouter.get("/view-coursework", ensureLoggedIn('/login'), function (request,
                 "Coursework" : coursework,
                 "OriginStudent" : studentName
             });
-            return;
-        }
-        else if(request.query.selected != undefined) {
-            coursework = null;
-            for(var i = 0; i < students.length; i++) {
-                for(var j = 0; j < students[i].courseworks.length; j++) {
-                    if(request.query.selected == students[i].courseworks[j].courseworkId){
-                        coursework  = students[i].courseworks[j];
-                        // Exit loop on required coursework find.
-                        break;
+        });
+        return;
+    }
+    else {
+        dao.get_model_items(db_accessor.models.Student, loggedInStudent).then(students => {
+            if(request.query.selected != undefined) {
+                coursework = null;
+                for(var i = 0; i < students.length; i++) {
+                    for(var j = 0; j < students[i].courseworks.length; j++) {
+                        if(request.query.selected == students[i].courseworks[j].courseworkId){
+                            coursework  = students[i].courseworks[j];
+                            // Exit loop on required coursework find.
+                            break;
+                        }
                     }
                 }
-            }
-            base_url = request.get("host")
-            response.render("view-selected-coursework", {
-                "Title" : "Selected Coursework",
-                "page" : "CWKCheckr Selected Coursework",
-                "Coursework" : coursework,
-                "ShareableLink" : `${base_url}/view-coursework?shareStudent=${loggedInStudent.studentNo}&cwkId=${coursework.courseworkId}`
-            });
-            return;
-        } else {
-            complete_courseworks = [];
-            incomplete_courseworks =[];
-            for (var i = 0; i < students.length; i++) {
-                for(var j = 0; j < students[i].courseworks.length; j++) {
-                    if(students[i].courseworks[j].completionDate != null) {
-                        console.log(students[i].courseworks[j]);
-                        complete_courseworks.push(students[i].courseworks[j]);
-                    } else {
-                        console.log(students[i].courseworks[j]);
-                        incomplete_courseworks.push(students[i].courseworks[j]);
+                base_url = request.get("host")
+                response.render("view-selected-coursework", {
+                    "Title" : "Selected Coursework",
+                    "page" : "CWKCheckr Selected Coursework",
+                    "Coursework" : coursework,
+                    "ShareableLink" : `${base_url}/view-coursework?shareStudent=${loggedInStudent.studentNo}&cwkId=${coursework.courseworkId}`
+                });
+                return;
+            } else {
+                complete_courseworks = [];
+                incomplete_courseworks =[];
+                for (var i = 0; i < students.length; i++) {
+                    for(var j = 0; j < students[i].courseworks.length; j++) {
+                        if(students[i].courseworks[j].completionDate != null) {
+                            console.log(students[i].courseworks[j]);
+                            complete_courseworks.push(students[i].courseworks[j]);
+                        } else {
+                            console.log(students[i].courseworks[j]);
+                            incomplete_courseworks.push(students[i].courseworks[j]);
+                        }
                     }
                 }
+                response.render("view-coursework", {
+                    "Title" : "View Coursework",
+                    "page" : "CWKCheckr View Coursework",
+                    "Complete Coursework" : complete_courseworks,
+                    "Incomplete Coursework" : incomplete_courseworks
+                });
+                return;
             }
+        }).catch(error => {
+            console.log(error);
+            console.log("could not retrieve student, see error above");
             response.render("view-coursework", {
                 "Title" : "View Coursework",
                 "page" : "CWKCheckr View Coursework",
-                "Complete Coursework" : complete_courseworks,
-                "Incomplete Coursework" : incomplete_courseworks
-            });
-            return;
-        }
-    }).catch(error => {
-        console.log(error);
-        console.log("could not retrieve student, see error above");
-        response.render("view-coursework", {
-            "Title" : "View Coursework",
-            "page" : "CWKCheckr View Coursework",
-            "Complete Coursework" : [],
-            "Incomplete Coursework" : []
-        }); 
-    });
-    
+                "Complete Coursework" : [],
+                "Incomplete Coursework" : []
+            }); 
+        });
+    }
 });
 
 viewsRouter.get("/add-coursework", ensureLoggedIn('/login'), function(request, response) {
